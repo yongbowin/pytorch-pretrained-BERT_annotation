@@ -23,24 +23,24 @@ tokens_tensor = torch.tensor([indexed_tokens])
 segments_tensors = torch.tensor([segments_ids])
 
 # ========================= BertModel ==============================
-# Load pre-trained model (weights)
-model = BertModel.from_pretrained('bert-base-uncased')
-model.eval()
-
-# Predict hidden states features for each layer
-encoded_layers, _ = model(tokens_tensor, segments_tensors)
-# We have a hidden states for each of the 12 layers in model bert-base-uncased
-assert len(encoded_layers) == 12
-
-# ========================= BertForMaskedLM ==============================
 # # Load pre-trained model (weights)
-# model = BertForMaskedLM.from_pretrained('bert-base-uncased')
+# model = BertModel.from_pretrained('bert-base-uncased')
 # model.eval()
 #
-# # Predict all tokens
-# predictions = model(tokens_tensor, segments_tensors)
-#
-# # confirm we were able to predict 'henson'
-# predicted_index = torch.argmax(predictions[0, masked_index]).item()
-# predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])[0]
-# assert predicted_token == 'henson'
+# # Predict hidden states features for each layer
+# encoded_layers, _ = model(tokens_tensor, segments_tensors)
+# # We have a hidden states for each of the 12 layers in model bert-base-uncased
+# assert len(encoded_layers) == 12
+
+# ========================= BertForMaskedLM ==============================
+# Load pre-trained model (weights)
+model = BertForMaskedLM.from_pretrained('bert-base-uncased')
+model.eval()
+
+# Predict all tokens
+predictions = model(tokens_tensor, segments_tensors)
+
+# confirm we were able to predict 'henson'
+predicted_index = torch.argmax(predictions[0, masked_index]).item()
+predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])[0]
+assert predicted_token == 'henson'
