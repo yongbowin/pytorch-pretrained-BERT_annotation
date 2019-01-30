@@ -561,12 +561,16 @@ class BertPooler(nn.Module):
 class BertPredictionHeadTransform(nn.Module):
     def __init__(self, config):
         super(BertPredictionHeadTransform, self).__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        self.dense = nn.Linear(config.hidden_size, config.hidden_size)  # (768, 768)
         self.transform_act_fn = ACT2FN[config.hidden_act] \
-            if isinstance(config.hidden_act, str) else config.hidden_act
+            if isinstance(config.hidden_act, str) else config.hidden_act  # gelu
         self.LayerNorm = BertLayerNorm(config.hidden_size, eps=1e-12)
 
     def forward(self, hidden_states):
+        """
+        hidden_states.size():
+            torch.Size([1, 11, 768])
+        """
         hidden_states = self.dense(hidden_states)
         hidden_states = self.transform_act_fn(hidden_states)
         hidden_states = self.LayerNorm(hidden_states)
@@ -578,17 +582,21 @@ class BertLMPredictionHead(nn.Module):
         super(BertLMPredictionHead, self).__init__()
         self.transform = BertPredictionHeadTransform(config)
 
+        """
+        bert_model_embedding_weights.size():
+            torch.Size([30522, 768])
+        """
         # The output weights are the same as the input embeddings, but there is
         # an output-only bias for each token.
         self.decoder = nn.Linear(bert_model_embedding_weights.size(1),
                                  bert_model_embedding_weights.size(0),
-                                 bias=False)
-        self.decoder.weight = bert_model_embedding_weights
+                                 bias=False)  # torch.Size([768, 30522])
+        self.decoder.weight = bert_model_embedding_weights  # torch.Size([30522, 768])
         self.bias = nn.Parameter(torch.zeros(bert_model_embedding_weights.size(0)))
 
     def forward(self, hidden_states):
-        hidden_states = self.transform(hidden_states)
-        hidden_states = self.decoder(hidden_states) + self.bias
+        hidden_states = self.transform(hidden_states)  # torch.Size([1, 11, 768]) --> torch.Size([1, 11, 768])
+        hidden_states = self.decoder(hidden_states) + self.bias  # torch.Size([1, 11, 30522])
         return hidden_states
 
 
@@ -1051,10 +1059,23 @@ class BertForMaskedLM(PreTrainedBertModel):
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, masked_lm_labels=None):
+        """
+        sequence_output.size():
+            torch.Size([1, 11, 768])
+        """
         sequence_output, _ = self.bert(input_ids, token_type_ids, attention_mask,
                                        output_all_encoded_layers=False)
-        prediction_scores = self.cls(sequence_output)
+        prediction_scores = self.cls(sequence_output)  # torch.Size([1, 11, 30522])
 
+        """
+        vocab_size=30522
+        
+        masked_lm_labels.size():
+            [batch_size, sequence_length, vocab_size]
+        
+        prediction_scores.view(-1, self.config.vocab_size).size()
+            torch.Size([11, 30522])
+        """
         if masked_lm_labels is not None:
             loss_fct = CrossEntropyLoss(ignore_index=-1)
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.config.vocab_size), masked_lm_labels.view(-1))
