@@ -108,8 +108,45 @@ class InputFeatures(object):
 
 def read_squad_examples(input_file, is_training):
     """Read a SQuAD json file into a list of SquadExample."""
+
+    """The following is the arch of the element in the list:
+    
+        ```
+        {
+        "title": "University_of_Notre_Dame",
+        "paragraphs": [
+            {
+                "context": "Architecturally, the school has a Catholic character. Atop the Main Building's gold dome is 
+                a golden statue of the Virgin Mary. Immediately in front of the Main Building and facing it, is a copper 
+                statue of Christ with arms upraised with the legend \"Venite Ad Me Omnes\". Next to the Main Building is 
+                the Basilica of the Sacred Heart. Immediately behind the basilica is the Grotto, a Marian place of prayer 
+                and reflection. It is a replica of the grotto at Lourdes, France where the Virgin Mary reputedly appeared 
+                to Saint Bernadette Soubirous in 1858. At the end of the main drive (and in a direct line that connects 
+                through 3 statues and the Gold Dome), is a simple, modern stone statue of Mary.",
+                "qas": [
+                    {
+                        "answers": [
+                            {
+                                "answer_start": 515,
+                                "text": "Saint Bernadette Soubirous"
+                            }
+                        ],
+                        "question": "To whom did the Virgin Mary allegedly appear in 1858 in Lourdes France?",
+                        "id": "5733be284776f41900661182"
+                    },
+                    
+                    ... ...
+                
+                ]
+            },
+            
+            ... ...
+        
+        }
+            ```
+    """
     with open(input_file, "r", encoding='utf-8') as reader:
-        input_data = json.load(reader)["data"]
+        input_data = json.load(reader)["data"]  # list, len=442
 
     def is_whitespace(c):
         if c == " " or c == "\t" or c == "\r" or c == "\n" or ord(c) == 0x202F:
@@ -669,6 +706,7 @@ def _compute_softmax(scores):
         probs.append(score / total_sum)
     return probs
 
+
 def warmup_linear(x, warmup=0.002):
     if x < warmup:
         return x/warmup
@@ -676,9 +714,24 @@ def warmup_linear(x, warmup=0.002):
 
 
 def main():
+    """
+    python run_squad.py \
+      --bert_model bert-base-uncased \
+      --do_train \
+      --do_predict \
+      --do_lower_case \
+      --train_file $SQUAD_DIR/train-v1.1.json \
+      --predict_file $SQUAD_DIR/dev-v1.1.json \
+      --train_batch_size 12 \
+      --learning_rate 3e-5 \
+      --num_train_epochs 2.0 \
+      --max_seq_length 384 \
+      --doc_stride 128 \
+      --output_dir /tmp/debug_squad/
+    """
     parser = argparse.ArgumentParser()
 
-    ## Required parameters
+    # Required parameters
     parser.add_argument("--bert_model", default=None, type=str, required=True,
                         help="Bert pre-trained model selected in the list: bert-base-uncased, "
                         "bert-large-uncased, bert-base-cased, bert-large-cased, bert-base-multilingual-uncased, "
@@ -686,7 +739,7 @@ def main():
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model checkpoints and predictions will be written.")
 
-    ## Other parameters
+    # Other parameters
     parser.add_argument("--train_file", default=None, type=str, help="SQuAD json for training. E.g., train-v1.1.json")
     parser.add_argument("--predict_file", default=None, type=str,
                         help="SQuAD json for predictions. E.g., dev-v1.1.json or test-v1.1.json")
@@ -788,6 +841,21 @@ def main():
 
     tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
 
+    """
+    train_examples[0]:
+    
+        qas_id: 5733be284776f41900661182, 
+        question_text: To whom did the Virgin Mary allegedly appear in 1858 in Lourdes France?, 
+        doc_tokens: [Architecturally, the school has a Catholic character.Atop the Main Building's gold dome is a golden
+                    statue of the Virgin Mary. Immediately in front of the Main Building and facing it, is a copper statue
+                    of Christ with arms upraised with the legend "Venite Ad Me Omnes". Next to the Main Building is the 
+                    Basilica of the Sacred Heart. Immediately behind the basilica is the Grotto, a Marian place of prayer
+                    and reflection. It is a replica of the grotto at Lourdes, France where the Virgin Mary reputedly 
+                    appeared to Saint Bernadette Soubirous in 1858. At the end of the main drive (and in a direct line 
+                    that connects through 3 statues and the Gold Dome), is a simple, modern stone statue of Mary.], 
+        start position: 90, 
+        end_position: 92
+    """
     train_examples = None
     num_train_steps = None
     if args.do_train:

@@ -1,4 +1,8 @@
 """
+Exec this file by run 'python setup.py build' to related the this source code path.
+"""
+
+"""
 Simple check list from AllenNLP repo: https://github.com/allenai/allennlp/blob/master/setup.py
 
 To create the package for pypi.

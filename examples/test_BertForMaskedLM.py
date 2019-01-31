@@ -30,6 +30,13 @@ model.eval()
 """
 predictions.size():
     torch.Size([1, 11, 30522])
+
+predictions[0, masked_index]:
+    tensor([-7.8384, -7.8162, -7.8893,  ..., -6.9924, -6.1897, -4.5417],
+       grad_fn=<SelectBackward>)
+
+predictions[0, masked_index].size():
+    torch.Size([30522])
 """
 # Predict all tokens
 predictions = model(tokens_tensor, segments_tensors)
