@@ -27,6 +27,8 @@ from .file_utils import cached_path
 
 logger = logging.getLogger(__name__)
 
+"""Uncased means that the text has been lowercased before WordPiece tokenization.
+"""
 PRETRAINED_VOCAB_ARCHIVE_MAP = {
     'bert-base-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt",
     'bert-large-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-uncased-vocab.txt",
@@ -68,7 +70,7 @@ def whitespace_tokenize(text):
     text = text.strip()
     if not text:
         return []
-    tokens = text.split()
+    tokens = text.split()  # split by ' ' return a word list.
     return tokens
 
 
@@ -192,6 +194,16 @@ class BasicTokenizer(object):
 
     def _run_strip_accents(self, text):
         """Strips accents from a piece of text."""
+        """
+        Strips accents mean the following,
+            input: "Málaga"
+            output: "Malaga"
+        
+        output:
+            ['M', 'a', 'l', 'a', 'g', 'a']
+        "".join(output)   
+            Malaga
+        """
         text = unicodedata.normalize("NFD", text)
         output = []
         for char in text:
@@ -203,6 +215,9 @@ class BasicTokenizer(object):
 
     def _run_split_on_punc(self, text):
         """Splits punctuation on a piece of text."""
+        """
+        If text is one of "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]", return directly without removing "[" or "]"
+        """
         if text in self.never_split:
             return [text]
         chars = list(text)
@@ -220,14 +235,39 @@ class BasicTokenizer(object):
                 start_new_word = False
                 output[-1].append(char)
             i += 1
-
+        print("========")
+        print(output)
         return ["".join(x) for x in output]
 
     def _tokenize_chinese_chars(self, text):
         """Adds whitespace around any CJK character."""
+        """
+        CJK:
+            Chinese, Japanese, Korean
+        
+        text = "[CLS] Who 这是一个测试 was Jim Henson ? [SEP] Jim Henson was a puppeteer [SEP]"
+        
+        ord():
+            Return the Unicode code point for a one-character string.
+            
+            cp = 91
+            cp = 67
+            cp = 76
+            ...
+            
+        "".join(output):
+            [CLS] Who  这  是  一  个  测  试  was Jim Henson ? [SEP] Jim Henson was a puppeteer [SEP]
+
+        output:
+            ['[', 'C', 'L', 'S', ']', ' ', 'W', 'h', 'o', ' ', ' ', '这', ' ', ' ', '是', ' ', ' ', '一', ' ', ' ', '个', 
+                ' ', ' ', '测', ' ', ' ', '试', ' ', ' ', 'w', 'a', 's', ' ', 'J', 'i', 'm', ' ', 'H', 'e', 'n', 's', 
+                'o', 'n', ' ', '?', ' ', '[', 'S', 'E', 'P', ']', ' ', 'J', 'i', 'm', ' ', 'H', 'e', 'n', 's', 'o', 'n', 
+                ' ', 'w', 'a', 's', ' ', 'a', ' ', 'p', 'u', 'p', 'p', 'e', 't', 'e', 'e', 'r', ' ', '[', 'S', 'E', 'P', 
+                ']']
+        """
         output = []
         for char in text:
-            cp = ord(char)
+            cp = ord(char)  #
             if self._is_chinese_char(cp):
                 output.append(" ")
                 output.append(char)
