@@ -759,22 +759,39 @@ def _compute_softmax(scores):
         probs.append(score / total_sum)
     return probs
 
+
 def warmup_linear(x, warmup=0.002):
     if x < warmup:
         return x/warmup
     return 1.0 - x
 
+
 def main():
+    """
+    python run_squad2.py \
+      --bert_model bert-base-uncased \
+      --do_train \
+      --do_predict \
+      --do_lower_case \
+      --train_file /home/wangyongbo/data/squad_v2.0/train-v2.0.json \
+      --predict_file /home/wangyongbo/data/squad_v2.0/dev-v2.0.json \
+      --train_batch_size 12 \
+      --learning_rate 3e-5 \
+      --num_train_epochs 2.0 \
+      --max_seq_length 384 \
+      --doc_stride 128 \
+      --output_dir /tmp/debug_squad2/
+    """
     parser = argparse.ArgumentParser()
 
-    ## Required parameters
+    # Required parameters
     parser.add_argument("--bert_model", default=None, type=str, required=True,
                         help="Bert pre-trained model selected in the list: bert-base-uncased, "
                              "bert-large-uncased, bert-base-cased, bert-base-multilingual, bert-base-chinese.")
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model checkpoints and predictions will be written.")
 
-    ## Other parameters
+    # Other parameters
     parser.add_argument("--train_file", default=None, type=str, help="SQuAD json for training. E.g., train-v1.1.json")
     parser.add_argument("--predict_file", default=None, type=str,
                         help="SQuAD json for predictions. E.g., dev-v1.1.json or test-v1.1.json")

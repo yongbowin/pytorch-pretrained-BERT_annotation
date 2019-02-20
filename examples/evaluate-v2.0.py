@@ -16,7 +16,28 @@ import sys
 
 OPTS = None
 
+
 def parse_args():
+  """
+  python evaluate-v2.0.py <path_to_dev-v2.0> <path_to_predictions>
+
+  bert-base-uncased
+
+  EXEC:
+    python evaluate-v2.0.py ./dev-v2.0.json /tmp/debug_squad2/predictions.json
+  RES:
+    {
+      "exact": 70.78244757011707,
+      "f1": 74.11532024041503,
+      "total": 11873,
+      "HasAns_exact": 71.72739541160594,
+      "HasAns_f1": 78.40269858543304,
+      "HasAns_total": 5928,
+      "NoAns_exact": 69.84020185029436,
+      "NoAns_f1": 69.84020185029436,
+      "NoAns_total": 5945
+    }
+  """
   parser = argparse.ArgumentParser('Official evaluation script for SQuAD version 2.0.')
   parser.add_argument('data_file', metavar='data.json', help='Input data JSON file.')
   parser.add_argument('pred_file', metavar='pred.json', help='Model predictions.')
@@ -33,6 +54,7 @@ def parse_args():
     parser.print_help()
     sys.exit(1)
   return parser.parse_args()
+
 
 def make_qid_to_has_ans(dataset):
   qid_to_has_ans = {}
