@@ -407,9 +407,21 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
 
 
 def main():
+    """
+    python run_lm_finetuning.py \
+      --bert_model bert-base-uncased \
+      --do_lower_case \
+      --do_train \
+      --train_file ../samples/sample_text.txt \
+      --output_dir models \
+      --num_train_epochs 5.0 \
+      --learning_rate 3e-5 \
+      --train_batch_size 32 \
+      --max_seq_length 128 \
+    """
     parser = argparse.ArgumentParser()
 
-    ## Required parameters
+    # Required parameters
     parser.add_argument("--train_file",
                         default=None,
                         type=str,
@@ -424,7 +436,7 @@ def main():
                         required=True,
                         help="The output directory where the model checkpoints will be written.")
 
-    ## Other parameters
+    # Other parameters
     parser.add_argument("--max_seq_length",
                         default=128,
                         type=int,
@@ -524,6 +536,10 @@ def main():
     num_train_steps = None
     if args.do_train:
         print("Loading Train Dataset", args.train_file)
+        """
+        train_dataset:
+            TODO:
+        """
         train_dataset = BERTDataset(args.train_file, tokenizer, seq_len=args.max_seq_length,
                                     corpus_lines=None, on_memory=args.on_memory)
         num_train_steps = int(
