@@ -52,6 +52,8 @@ VOCAB_NAME = 'vocab.txt'
 
 def load_vocab(vocab_file):
     """Loads a vocabulary file into a dictionary."""
+    """The size of vocab is 30522
+    """
     vocab = collections.OrderedDict()
     index = 0
     with open(vocab_file, "r", encoding="utf-8") as reader:
@@ -89,7 +91,7 @@ class BertTokenizer(object):
         self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case,
                                               never_split=never_split)
         self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab)
-        self.max_len = max_len if max_len is not None else int(1e12)
+        self.max_len = max_len if max_len is not None else int(1e12)  # max_len=512
 
     def tokenize(self, text):
         split_tokens = []
@@ -137,6 +139,8 @@ class BertTokenizer(object):
             vocab_file = os.path.join(vocab_file, VOCAB_NAME)
         # redirect to the cache, if necessary
         try:
+            """Save file to "~/.pytorch_pretrained_bert".
+            """
             resolved_vocab_file = cached_path(vocab_file, cache_dir=cache_dir)
         except FileNotFoundError:
             logger.error(
