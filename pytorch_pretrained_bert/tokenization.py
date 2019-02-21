@@ -96,6 +96,11 @@ class BertTokenizer(object):
         for token in self.basic_tokenizer.tokenize(text):
             for sub_token in self.wordpiece_tokenizer.tokenize(token):
                 split_tokens.append(sub_token)
+        """
+        split_tokens:
+            ['[CLS]', 'who', '[UNK]', '[UNK]', '一', '[UNK]', '[UNK]', '[UNK]', 'was', 'jim', 'henson', '?', '[SEP]', 
+                'jim', 'henson', 'was', 'a', 'puppet', '##eer', '[SEP]']
+        """
         return split_tokens
 
     def convert_tokens_to_ids(self, tokens):
@@ -189,6 +194,11 @@ class BasicTokenizer(object):
                 token = self._run_strip_accents(token)
             split_tokens.extend(self._run_split_on_punc(token))
 
+        """
+        output_tokens:
+            ['[CLS]', 'who', '这', '是', '一', '个', '测', '试', 'was', 'jim', 'henson', '?', '[SEP]', 'jim', 'henson', 
+                'was', 'a', 'puppeteer', '[SEP]']
+        """
         output_tokens = whitespace_tokenize(" ".join(split_tokens))
         return output_tokens
 
@@ -235,8 +245,7 @@ class BasicTokenizer(object):
                 start_new_word = False
                 output[-1].append(char)
             i += 1
-        print("========")
-        print(output)
+
         return ["".join(x) for x in output]
 
     def _tokenize_chinese_chars(self, text):
@@ -336,13 +345,20 @@ class WordpieceTokenizer(object):
 
         Returns:
           A list of wordpiece tokens.
+
+        Papers: (for wordPiece)
+            [1] https://arxiv.org/pdf/1508.07909.pdf
+            [2] https://arxiv.org/pdf/1609.08144.pdf
+
+        whitespace_tokenize():
+            split by ' ' return a word list, i.e. ["word1", "word2", ..., "wordn"]
         """
 
         output_tokens = []
-        for token in whitespace_tokenize(text):
+        for token in whitespace_tokenize(text):  # text is a word
             chars = list(token)
             if len(chars) > self.max_input_chars_per_word:
-                output_tokens.append(self.unk_token)
+                output_tokens.append(self.unk_token)  # unknown
                 continue
 
             is_bad = False
@@ -362,8 +378,8 @@ class WordpieceTokenizer(object):
                 if cur_substr is None:
                     is_bad = True
                     break
-                sub_tokens.append(cur_substr)
-                start = end
+                sub_tokens.append(cur_substr)  # if cur_substr in vocab, append it to [].
+                start = end  # when head part was appended, start the latter part of this word.
 
             if is_bad:
                 output_tokens.append(self.unk_token)

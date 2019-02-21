@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5e3022bd-a31c-415a-bbc4-2f14ea5a2ffb" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/examples/test_tokenization.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_tokenization.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py" beforeDir="false" afterPath="$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,7 +16,7 @@
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test_squad.coverage" NAME="test_squad Coverage Results" MODIFIED="1548850740422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$run_squad.coverage" NAME="run_squad Coverage Results" MODIFIED="1548899512331" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test1.coverage" NAME="test1 Coverage Results" MODIFIED="1548840969921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test_tokenization.coverage" NAME="test_tokenization Coverage Results" MODIFIED="1550671303615" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test_tokenization.coverage" NAME="test_tokenization Coverage Results" MODIFIED="1550720938701" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="1184885413">
@@ -50,14 +51,14 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="5" />
           <entry key="md" value="117" />
-          <entry key="py" value="1726" />
+          <entry key="py" value="2376" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="5" />
-          <entry key="Python" value="1738" />
+          <entry key="Python" value="2388" />
           <entry key="SQL" value="1" />
         </counts>
       </usages-collector>
@@ -101,8 +102,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
-              <caret line="238" column="21" lean-forward="true" selection-start-line="238" selection-start-column="21" selection-end-line="238" selection-end-column="21" />
+            <state relative-caret-position="418">
+              <caret line="118" column="29" selection-start-line="118" selection-start-column="29" selection-end-line="118" selection-end-column="29" />
               <folding>
                 <element signature="e#673#711#0" expanded="true" />
               </folding>
@@ -113,8 +114,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/test_tokenization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="1083">
+              <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -155,8 +156,8 @@
         <option value="$PROJECT_DIR$/examples/evaluate-v1.1.py" />
         <option value="$PROJECT_DIR$/examples/run_squad2.py" />
         <option value="$PROJECT_DIR$/examples/evaluate-v2.0.py" />
-        <option value="$PROJECT_DIR$/examples/test_tokenization.py" />
         <option value="$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py" />
+        <option value="$PROJECT_DIR$/examples/test_tokenization.py" />
       </list>
     </option>
   </component>
@@ -392,7 +393,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32934782" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.27608696" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.19782609" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -635,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/test_tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+        <state relative-caret-position="1083">
+          <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -645,8 +646,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="238" column="21" lean-forward="true" selection-start-line="238" selection-start-column="21" selection-end-line="238" selection-end-column="21" />
+        <state relative-caret-position="418">
+          <caret line="118" column="29" selection-start-line="118" selection-start-column="29" selection-end-line="118" selection-end-column="29" />
           <folding>
             <element signature="e#673#711#0" expanded="true" />
           </folding>
