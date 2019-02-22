@@ -286,6 +286,8 @@ class BertSelfAttention(nn.Module):
                     [ 0.2525, -0.2125, -0.3403,  0.3003],
                     [ 0.6209,  0.6950, -0.6002, -0.7156],
                     [ 0.3126,  1.1139, -0.0799, -1.3465]])
+            >> aa.size()
+            >> torch.Size([4, 4])
             >> cc=aa.view(*c)
             >> cc
             tensor([[[-0.6545,  0.0555,  0.6007, -0.0017,  0.2525, -0.2125, -0.3403,
@@ -297,6 +299,8 @@ class BertSelfAttention(nn.Module):
             ```
 
         cc=aa.view(*c) is same as cc=aa.view(c)
+
+        function view() is similar to function reshape().
         """
         new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)  # torch.Size([1, 11, 12, 64])
         x = x.view(*new_x_shape)
@@ -458,9 +462,10 @@ class BertIntermediate(nn.Module):
     def __init__(self, config):
         super(BertIntermediate, self).__init__()
         self.dense = nn.Linear(config.hidden_size, config.intermediate_size)  # (768, 3072), 768*4=3072
-        """activation function
-        hidden_act="gelu"
-        ACT2FN = {"gelu": gelu, "relu": torch.nn.functional.relu, "swish": swish}
+        """
+        activation function
+            hidden_act="gelu"
+            ACT2FN = {"gelu": gelu, "relu": torch.nn.functional.relu, "swish": swish}
         """
         self.intermediate_act_fn = ACT2FN[config.hidden_act] \
             if isinstance(config.hidden_act, str) else config.hidden_act
@@ -531,21 +536,33 @@ class BertPooler(nn.Module):
         pooled_output:
             a torch.FloatTensor of size [batch_size, hidden_size] which is the output of a
             classifier pretrained on top of the hidden state associated to the first character of the
-            input (`CLF`) to train on the Next-Sentence task (see BERT's paper)
+            input (`CLS`) to train on the Next-Sentence task (see BERT's paper)
         """
         # We "pool" the model by simply taking the hidden state corresponding
         # to the first token.
         """
-        hidden_states:
+        For testing data, text = "Who was Jim Henson ? Jim Henson was a puppeteer"
+        
+        Similar to: ['[CLS]', 'who', 'was', 'jim', 'henson', '?', '[SEP]' 'jim', '[MASK]', 'was', 'a', 'puppet', '##eer', '[SEP]']
+        
+        hidden_states: 
             torch.Size([1, 11, 768])
-
         first_token_tensor:
             torch.Size([1, 768])
 
-        replace [CLF]
+        replace [CLS]
         
         pooled_output:
             torch.Size([1, 768])
+        
+        Example:
+        
+            >>> import torch
+            >>> a=torch.tensor([[[1,2,3],[4,5,6]]])
+            >>> a.size()
+            torch.Size([1, 2, 3])
+            >>> a[:,0]
+            tensor([[1, 2, 3]])
         """
 
         """The final hidden state:
@@ -559,6 +576,17 @@ class BertPooler(nn.Module):
 
 
 class BertPredictionHeadTransform(nn.Module):
+    """
+    Arch:
+        - Dense (768, 768)
+        - Activation (gelu)
+        - LayerNorm
+
+    Input:
+        torch.Size([1, 11, 768])
+    Output:
+        torch.Size([1, 11, 768])
+    """
     def __init__(self, config):
         super(BertPredictionHeadTransform, self).__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)  # (768, 768)
@@ -578,6 +606,25 @@ class BertPredictionHeadTransform(nn.Module):
 
 
 class BertLMPredictionHead(nn.Module):
+    """
+    Arch:
+        - BertPredictionHeadTransform (Input=torch.Size([1, 11, 768]), Output=torch.Size([1, 11, 768]))
+            - Dense (768, 768)
+            - Activation (gelu)
+            - LayerNorm
+        - Linear (768, 30522)
+
+    y = W * x + b
+    y = self.decoder.weight * self.decoder + self.bias
+    i.e., y = torch.Size([30522, 768]) * torch.Size([768, 30522]) + torch.Size([30522])
+
+    Input:
+        torch.Size([1, 11, 768])
+    Output:
+        torch.Size([1, 11, 30522])
+
+    The purpose is to Decode.
+    """
     def __init__(self, config, bert_model_embedding_weights):
         super(BertLMPredictionHead, self).__init__()
         self.transform = BertPredictionHeadTransform(config)
@@ -592,10 +639,21 @@ class BertLMPredictionHead(nn.Module):
                                  bert_model_embedding_weights.size(0),
                                  bias=False)  # torch.Size([768, 30522])
         self.decoder.weight = bert_model_embedding_weights  # torch.Size([30522, 768])
-        self.bias = nn.Parameter(torch.zeros(bert_model_embedding_weights.size(0)))
+        self.bias = nn.Parameter(torch.zeros(bert_model_embedding_weights.size(0)))  # torch.Size([30522])
 
     def forward(self, hidden_states):
-        hidden_states = self.transform(hidden_states)  # torch.Size([1, 11, 768]) --> torch.Size([1, 11, 768])
+        """
+        hidden_states:
+            torch.Size([1, 11, 768])
+
+        torch.Size([1, 11, 768]) --> torch.Size([1, 11, 768])
+        """
+        hidden_states = self.transform(hidden_states)
+        """
+        To predict the corresponding word in vocab. 
+        
+        Each of 11 positions has a tensor size=[30522] same to the size of vocab.
+        """
         hidden_states = self.decoder(hidden_states) + self.bias  # torch.Size([1, 11, 30522])
         return hidden_states
 
@@ -606,7 +664,7 @@ class BertOnlyMLMHead(nn.Module):
         self.predictions = BertLMPredictionHead(config, bert_model_embedding_weights)
 
     def forward(self, sequence_output):
-        prediction_scores = self.predictions(sequence_output)
+        prediction_scores = self.predictions(sequence_output)  # sequence_output = torch.Size([1, 11, 768])
         return prediction_scores
 
 
@@ -621,12 +679,48 @@ class BertOnlyNSPHead(nn.Module):
 
 
 class BertPreTrainingHeads(nn.Module):
+    """
+    The purpose is to Decode and predict the relation of sequence.
+
+    Arch:
+        - BertLMPredictionHead (Input is `sequence_output`, the purpose is to Decode, predict corresponding word in vocab)
+            - BertPredictionHeadTransform (Input=torch.Size([1, 11, 768]), Output=torch.Size([1, 11, 768]))
+                - Dense (768, 768)
+                - Activation (gelu)
+                - LayerNorm
+            - Linear (768, 30522)
+        - Linear (Input is `pooled_output`, the purpose is to predict the relation of sequence)
+
+    Input:
+        sequence_output=torch.Size([1, 11, 768]), pooled_output=torch.Size([1, 768])
+    Output:
+        prediction_scores=torch.Size([1, 11, 30522]), seq_relationship_score=torch.Size([1, 2])
+    """
     def __init__(self, config, bert_model_embedding_weights):
         super(BertPreTrainingHeads, self).__init__()
         self.predictions = BertLMPredictionHead(config, bert_model_embedding_weights)
-        self.seq_relationship = nn.Linear(config.hidden_size, 2)
+        self.seq_relationship = nn.Linear(config.hidden_size, 2)  # (768, 2)
 
     def forward(self, sequence_output, pooled_output):
+        """
+        When pre-training, i.e., `BertForPreTraining`, the `output_all_encoded_layers=False`, that is to say
+        the length of `sequence_output=1`.
+        When `BertModel`, the `output_all_encoded_layers=False`, the following,
+            sequence_output: (the following list length=12)
+                [torch.Size([1, 11, 768]), torch.Size([1, 11, 768]), ..., torch.Size([1, 11, 768])]
+
+        sequence_output[-1].size():
+            torch.Size([1, 11, 768])
+
+        pooled_output:
+            torch.Size([1, 768])
+
+        prediction_scores:
+            torch.Size([1, 11, 30522])
+
+        seq_relationship_score:
+            torch.Size([1, 2])
+        """
         prediction_scores = self.predictions(sequence_output)
         seq_relationship_score = self.seq_relationship(pooled_output)
         return prediction_scores, seq_relationship_score
@@ -797,7 +891,7 @@ class BertModel(PreTrainedBertModel):
                 to the last attention block of shape [batch_size, sequence_length, hidden_size],
         `pooled_output`: a torch.FloatTensor of size [batch_size, hidden_size] which is the output of a
             classifier pretrained on top of the hidden state associated to the first character of the
-            input (`CLF`) to train on the Next-Sentence task (see BERT's paper).
+            input (`CLS`) to train on the Next-Sentence task (see BERT's paper).
 
     Example usage:
     ```python
@@ -832,7 +926,7 @@ class BertModel(PreTrainedBertModel):
             [batch_size, sequence_length]=(1, 11)
             token_type_ids=[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
         """
-        if attention_mask is None:  # if not None, should specific a mask's position by 0
+        if attention_mask is None:
             attention_mask = torch.ones_like(input_ids)
         if token_type_ids is None:
             token_type_ids = torch.zeros_like(input_ids)
@@ -933,7 +1027,22 @@ class BertModel(PreTrainedBertModel):
                                       output_all_encoded_layers=output_all_encoded_layers)
         sequence_output = encoded_layers[-1]  # the final hidden layer output
 
+        """
+        len(encoded_layers):12
+        
+        encoded_layers[-1].size():
+            torch.Size([1, 11, 768])
+        
+        pooled_output:
+            torch.Size([1, 768])
+        """
         pooled_output = self.pooler(sequence_output)
+        """
+        When pre-training, the `output_all_encoded_layers=False`
+        When `BertModel`, the `output_all_encoded_layers=True`
+        ...
+        
+        """
         if not output_all_encoded_layers:
             encoded_layers = encoded_layers[-1]
         return encoded_layers, pooled_output
@@ -996,12 +1105,49 @@ class BertForPreTraining(PreTrainedBertModel):
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, masked_lm_labels=None, next_sentence_label=None):
+        """
+        `sequence_output`: outputs the full sequence of hidden-states.
+        `pooled_output`: a torch.FloatTensor of size [batch_size, hidden_size] which is the output of a
+            classifier pretrained on top of the hidden state associated to the first character of the
+            input (`CLS`) to train on the Next-Sentence task (see BERT's paper).
+        """
         sequence_output, pooled_output = self.bert(input_ids, token_type_ids, attention_mask,
                                                    output_all_encoded_layers=False)
+        """
+        self.cls
+            Input: sequence_output=torch.Size([1, 11, 768]), pooled_output=torch.Size([1, 768])
+            Output: prediction_scores=torch.Size([1, 11, 30522]), seq_relationship_score=torch.Size([1, 2])
+        """
         prediction_scores, seq_relationship_score = self.cls(sequence_output, pooled_output)
 
         if masked_lm_labels is not None and next_sentence_label is not None:
+            """
+            loss_fct(input, target)
+            """
             loss_fct = CrossEntropyLoss(ignore_index=-1)
+
+            """function view() is similar to function reshape().
+            
+            Example:
+                >>> a.size([4, 4])
+                >>> a
+                tensor([[0., 0., 0., 0.],
+                        [0., 0., 0., 0.],
+                        [0., 0., 0., 0.],
+                        [0., 0., 0., 0.]])
+                >>> a.view(-1)
+                tensor([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+                >>> a.view(-1).size()
+                torch.Size([16])
+                >>> a.view(-1, 16)
+                tensor([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]])
+                >>> a.view(-1, 16).size()
+                torch.Size([1, 16])
+                
+            Function view() is to concat tensor to 1 line.
+            
+            loss_fct(torch.Size([11, 30522]), masked_lm_labels.view(-1))
+            """
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.config.vocab_size), masked_lm_labels.view(-1))
             next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
             total_loss = masked_lm_loss + next_sentence_loss
