@@ -2,7 +2,7 @@
 
 > This BERT annotation repo is for my personal study.
 
-The raw README of PyTorch Pretrained Bert is [here](README_bert.md). A very nice [PPT](https://nlp.stanford.edu/seminar/details/lkaiser.pdf) to help understanding.
+The raw README of PyTorch Pretrained Bert is [here](README_bert.md). A very nice [PPT](https://nlp.stanford.edu/seminar/details/lkaiser.pdf) to help understanding. Synthetic Self-Training [PPT](https://nlp.stanford.edu/seminar/details/jdevlin.pdf?fbclid=IwAR2TBFCJOeZ9cGhxB-z5cJJ17vHN4W25oWsjI8NqJoTEmlYIYEKG7oh4tlY).
 
 ## Arch
 
