@@ -257,7 +257,10 @@ class QuescateProcessor(DataProcessor):
             # ["question", "answer", "label"], the first line in file.
             text_a = line[0]
             text_b = line[1]
-            label = line[-1]
+            if set_type == "test":
+                label = "0"
+            else:
+                label = line[-1]
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
@@ -325,7 +328,10 @@ def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer
         assert len(input_mask) == max_seq_length
         assert len(segment_ids) == max_seq_length
 
-        label_id = label_map[example.label]
+        if example.label == "0":
+            label_id = 100
+        else:
+            label_id = label_map[example.label]
         if ex_index < 5:
             logger.info("*** Example ***")
             logger.info("guid: %s" % (example.guid))
@@ -408,6 +414,9 @@ def main():
     parser.add_argument("--do_eval",
                         action='store_true',
                         help="Whether to run eval on the dev set.")
+    parser.add_argument("--do_predict",
+                        action='store_true',
+                        help="Whether to run predict on the test set.")
     parser.add_argument("--do_lower_case",
                         action='store_true',
                         help="Set this flag if you are using an uncased model.")
@@ -417,6 +426,10 @@ def main():
                         help="Total batch size for training.")
     parser.add_argument("--eval_batch_size",
                         default=8,
+                        type=int,
+                        help="Total batch size for eval.")
+    parser.add_argument("--predict_batch_size",
+                        default=1,
                         type=int,
                         help="Total batch size for eval.")
     parser.add_argument("--learning_rate",
@@ -506,8 +519,8 @@ def main():
     if n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
 
-    if not args.do_train and not args.do_eval:
-        raise ValueError("At least one of `do_train` or `do_eval` must be True.")
+    if not args.do_train and not args.do_eval and not args.do_predict:
+        raise ValueError("At least one of `do_train` or `do_eval` or `do_predict` must be True.")
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train:
         raise ValueError("Output directory ({}) already exists and is not empty.".format(args.output_dir))
@@ -538,11 +551,20 @@ def main():
         if args.local_rank != -1:
             num_train_optimization_steps = num_train_optimization_steps // torch.distributed.get_world_size()
 
-    # Prepare model (load)
-    cache_dir = args.cache_dir if args.cache_dir else os.path.join(str(PYTORCH_PRETRAINED_BERT_CACHE), 'distributed_{}'.format(args.local_rank))
-    model = BertForSequenceClassification.from_pretrained(args.bert_model,
-              cache_dir=cache_dir,
-              num_labels = num_labels)
+    # Prepare model (load), download from s3
+    if args.do_train or args.do_eval:
+        cache_dir = args.cache_dir if args.cache_dir else os.path.join(str(PYTORCH_PRETRAINED_BERT_CACHE), 'distributed_{}'.format(args.local_rank))
+        model = BertForSequenceClassification.from_pretrained(args.bert_model,
+                  cache_dir=cache_dir,
+                  num_labels=num_labels)
+    if args.do_predict:
+        output_model_file = os.path.join(args.output_dir, WEIGHTS_NAME)
+        output_config_file = os.path.join(args.output_dir, CONFIG_NAME)
+        # Load a trained model and config that you have fine-tuned
+        config = BertConfig(output_config_file)
+        model = BertForSequenceClassification(config, num_labels=num_labels)
+        model.load_state_dict(torch.load(output_model_file))
+
     if args.fp16:
         model.half()
     model.to(device)
@@ -651,10 +673,15 @@ def main():
         config = BertConfig(output_config_file)
         model = BertForSequenceClassification(config, num_labels=num_labels)
         model.load_state_dict(torch.load(output_model_file))
-    else:
-        model = BertForSequenceClassification.from_pretrained(args.bert_model, num_labels=num_labels)
-    model.to(device)
 
+        model.to(device)
+    elif not args.do_train and not args.do_predict:
+        model = BertForSequenceClassification.from_pretrained(args.bert_model, num_labels=num_labels)
+        model.to(device)
+
+    """
+    To evaluation
+    """
     if args.do_eval and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
         eval_examples = processor.get_dev_examples(args.data_dir)
         eval_features = convert_examples_to_features(
@@ -709,6 +736,119 @@ def main():
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
+
+    """
+    To predict,
+        one by one to predict, i.e., one time only has one sample.
+    """
+    if args.do_predict and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
+        predict_examples = processor.get_test_examples(args.data_dir)
+        num_actual_predict_examples = len(predict_examples)
+        """
+        input_ids=input_ids,
+        input_mask=input_mask,
+        segment_ids=segment_ids,
+        label_id=label_id
+        """
+        predict_features = convert_examples_to_features(
+            predict_examples, label_list, args.max_seq_length, tokenizer)
+        logger.info("***** Running evaluation *****")
+        logger.info("  Num examples = %d", len(predict_examples))
+        logger.info("  Batch size = %d", args.predict_batch_size)
+        all_input_ids = torch.tensor([f.input_ids for f in predict_features], dtype=torch.long)
+        all_input_mask = torch.tensor([f.input_mask for f in predict_features], dtype=torch.long)
+        all_segment_ids = torch.tensor([f.segment_ids for f in predict_features], dtype=torch.long)
+        # all_label_ids = torch.tensor([f.label_id for f in predict_features], dtype=torch.long)
+        predict_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids)
+        # Run prediction for full data
+        predict_sampler = SequentialSampler(predict_data)
+        predict_dataloader = DataLoader(predict_data, sampler=predict_sampler, batch_size=args.predict_batch_size)
+
+        model.eval()
+        predict = []
+        for input_ids, input_mask, segment_ids in tqdm(predict_dataloader, desc="Predicting"):
+            input_ids = input_ids.to(device)
+            input_mask = input_mask.to(device)
+            segment_ids = segment_ids.to(device)
+
+            """
+            batch_size=8
+            
+            type(logits) = <class 'numpy.ndarray'>
+            logits:
+                [[-0.69838923  0.27036643  0.5943373 ]
+                 [-0.84512466  0.23943791  0.5472788 ]
+                 [-0.4465914  -0.60343146 -0.8313097 ]
+                 [-0.52020323 -0.475485   -0.8743459 ]
+                 [-0.66284615  0.30615643  0.62117684]
+                 [-0.6683669   0.27725238  0.572317  ]
+                 [-0.7646524   0.26856643  0.5333996 ]
+                 [-0.73449135  0.259271    0.5099745 ]]
+            
+            softmax to classification
+                >>> a=np.array([[0.334,0.889,-0.123],[0.332,0.976,-0.543]])
+                >>> 
+                >>> aa=torch.tensor(a)
+                >>> aa
+                tensor([[ 0.3340,  0.8890, -0.1230],
+                        [ 0.3320,  0.9760, -0.5430]], dtype=torch.float64)
+                >>> 
+                >>> print(torch.nn.functional.softmax(aa, dim=1))
+                tensor([[0.2963, 0.5161, 0.1876],
+                        [0.3011, 0.5734, 0.1255]], dtype=torch.float64)
+                >>> print(torch.nn.functional.softmax(aa, dim=0))
+                tensor([[0.5005, 0.4783, 0.6035],
+                        [0.4995, 0.5217, 0.3965]], dtype=torch.float64)
+                >>> print(torch.nn.functional.softmax(aa, dim=-1))
+                tensor([[0.2963, 0.5161, 0.1876],
+                        [0.3011, 0.5734, 0.1255]], dtype=torch.float64)
+                >>> aa.shape
+                torch.Size([2, 3])
+            
+            To acquire the most prob elem.
+                >>> c=["yes", "no", "depends"]
+                >>> i
+                tensor([0.2963, 0.5161, 0.1876], dtype=torch.float64)
+                >>> 
+                >>> c[np.argmax(i)]
+                'no'
+                >>> c[torch.argmax(i)]
+                'no'
+                >>> type(c[torch.argmax(i)])
+                <class 'str'>
+
+            """
+
+            with torch.no_grad():
+                logits = model(input_ids, segment_ids, input_mask)
+                probabilities = torch.nn.functional.softmax(torch.tensor(logits), dim=-1)
+
+                for prediction in probabilities:  # predict is one by one, so the length of probabilities=1
+                    pred_label = label_list[np.argmax(prediction)]
+
+            predict.append(pred_label)
+
+        output_predict_file = os.path.join(args.output_dir, "predict_results.txt")
+
+        with open(output_predict_file, "w") as writer:
+            logger.info("***** Predict results *****")
+            num_written_lines = 0
+            for i in predict:
+                num_written_lines += 1
+                writer.write(i + "\n")
+
+        assert num_written_lines == num_actual_predict_examples
+        #     num_written_lines = 0
+        #     for (i, prediction) in enumerate(result):
+        #         probabilities = prediction["probabilities"]
+        #         if i >= num_actual_predict_examples:
+        #             break
+        #         output_line = "\t".join(
+        #             str(class_probability)
+        #             for class_probability in probabilities) + "\n"
+        #         writer.write(output_line)
+        #         num_written_lines += 1
+        # assert num_written_lines == num_actual_predict_examples
 
 
 if __name__ == "__main__":

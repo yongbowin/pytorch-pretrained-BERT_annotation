@@ -1,13 +1,2 @@
-import logging
-
-
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
-logger = logging.getLogger(__name__)
-
-ss="This is a test sentence."
-sss="The same to last one."
-
-logger.info("111 %s" % ss)
-logger.info("111")
+a="这个意义不大，我们买记录仪主要目的之一是防碰瓷。瓷爷都是在车辆经过的路段蹲守，等有车要过来的时候就敢上前去，还真没见过在车屁股后面追着碰瓷的，除非你在路上倒车。后置摄
+像头的左右只有一个就是记录追尾，不过交法归经追尾事故是后车全责，你记录了证据也没用。所以，真的没必要。"
