@@ -19,6 +19,17 @@ def clean_sepc_char(text):
     return text
 
 
+def E_trans_to_C(string):
+    """
+    transformer english char to chinese
+    """
+    E_pun = u',.!?[]()<>"\''
+    C_pun = u'，。！？【】（）《》“‘'
+    table = {ord(f): ord(t) for f, t in zip(E_pun, C_pun)}
+
+    return string.translate(table)
+
+
 # for i in res:
 #     data = json.loads(i)
 #     if "&amp" in data["answers"][0]:
@@ -59,6 +70,7 @@ for i in res:
     text = data["answers"][0]
     text = clean_sepc_char(text)
     text = remove_html(text)
+    text = E_trans_to_C(text)
 
     item_dict["question_id"] = data["question_id"]
     item_dict["question_type"] = data["question_type"]
