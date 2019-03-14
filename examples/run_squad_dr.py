@@ -303,10 +303,23 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
     unique_id = 1000000000
 
     features = []
+    """
+    examples:
+        example = SquadExample(
+                        qas_id=qas_id,
+                        question_text=question_text,
+                        doc_tokens=doc_tokens,
+                        orig_answer_text=orig_answer_text,
+                        start_position=start_position,
+                        end_position=end_position,
+                        is_impossible=is_impossible)
+        
+        examples=[example1, example2, example3, ......]
+    """
     for (example_index, example) in enumerate(examples):
-        query_tokens = tokenizer.tokenize(example.question_text)
+        query_tokens = tokenizer.tokenize(example.question_text)  # BertTokenizer
 
-        if len(query_tokens) > max_query_length:
+        if len(query_tokens) > max_query_length:  # max_query_length=64(default)
             query_tokens = query_tokens[0:max_query_length]
 
         tok_to_orig_index = []
@@ -314,14 +327,14 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
         all_doc_tokens = []
         for (i, token) in enumerate(example.doc_tokens):
             orig_to_tok_index.append(len(all_doc_tokens))
-            sub_tokens = tokenizer.tokenize(token)
+            sub_tokens = tokenizer.tokenize(token)  # eg: puppeteer --> ['puppet', '##eer']
             for sub_token in sub_tokens:
                 tok_to_orig_index.append(i)
                 all_doc_tokens.append(sub_token)
 
         tok_start_position = None
         tok_end_position = None
-        if is_training and example.is_impossible:
+        if is_training and example.is_impossible:  # has no answer.
             tok_start_position = -1
             tok_end_position = -1
         if is_training and not example.is_impossible:
@@ -335,6 +348,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                 example.orig_answer_text)
 
         # The -3 accounts for [CLS], [SEP] and [SEP]
+        """ `max_seq_length` is the length of all tokens, not chars."""
         max_tokens_for_doc = max_seq_length - len(query_tokens) - 3
 
         # We can have documents that are longer than the maximum sequence length.
@@ -440,8 +454,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                     answer_text = " ".join(tokens[start_position:(end_position + 1)])
                     logger.info("start_position: %d" % (start_position))
                     logger.info("end_position: %d" % (end_position))
-                    logger.info(
-                        "answer: %s" % (answer_text))
+                    logger.info("answer: %s" % (answer_text))
 
             features.append(
                 InputFeatures(
@@ -534,7 +547,6 @@ def _check_is_max_context(doc_spans, cur_span_index, position):
             best_span_index = span_index
 
     return cur_span_index == best_span_index
-
 
 
 RawResult = collections.namedtuple("RawResult",
@@ -999,6 +1011,19 @@ def main():
 
     tokenizer = BertTokenizer.from_pretrained(args.bert_model)
 
+    """
+    read_squad_examples() return:
+        example = SquadExample(
+                        qas_id=qas_id,
+                        question_text=question_text,
+                        doc_tokens=doc_tokens,
+                        orig_answer_text=orig_answer_text,
+                        start_position=start_position,
+                        end_position=end_position,
+                        is_impossible=is_impossible)
+        
+        examples=[example1, example2, example3, ......]
+    """
     train_examples = None
     num_train_steps = None
     if args.do_train:
@@ -1007,7 +1032,7 @@ def main():
         num_train_steps = int(
             len(train_examples) / args.train_batch_size / args.gradient_accumulation_steps * args.num_train_epochs)
 
-    # Prepare model
+    # Prepare model, `cache_dir` is pre-trained model path
     model = BertForQuestionAnswering.from_pretrained(args.bert_model,
                 cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(args.local_rank))
 
@@ -1073,9 +1098,9 @@ def main():
             train_features = convert_examples_to_features(
                 examples=train_examples,
                 tokenizer=tokenizer,
-                max_seq_length=args.max_seq_length,
-                doc_stride=args.doc_stride,
-                max_query_length=args.max_query_length,
+                max_seq_length=args.max_seq_length,  # default=384
+                doc_stride=args.doc_stride,  # default=128
+                max_query_length=args.max_query_length,  # default=64
                 is_training=True)
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
                 logger.info("  Saving train features into cached file %s", cached_train_features_file)
@@ -1183,6 +1208,10 @@ def main():
         output_prediction_file = os.path.join(args.output_dir, "predictions.json")
         output_nbest_file = os.path.join(args.output_dir, "nbest_predictions.json")
         output_null_log_odds_file = os.path.join(args.output_dir, "null_odds.json")
+        """
+        n_best_size = 20(default)
+        max_answer_length = 30(default)
+        """
         write_predictions(eval_examples, eval_features, all_results,
                           args.n_best_size, args.max_answer_length,
                           args.do_lower_case, output_prediction_file,
