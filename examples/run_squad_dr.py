@@ -557,8 +557,8 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                       max_answer_length, do_lower_case, output_prediction_file,
                       output_nbest_file, output_null_log_odds_file, verbose_logging, is_version2, null_score_diff_threshold):
     """Write final predictions to the json file and log-odds of null if needed."""
-    logger.info("Writing predictions to: %s" % (output_prediction_file))
-    logger.info("Writing nbest to: %s" % (output_nbest_file))
+    logger.info("Writing predictions to: %s" % (output_prediction_file))  # predictions.json
+    logger.info("Writing nbest to: %s" % (output_nbest_file))  # nbest_predictions.json
 
     example_index_to_features = collections.defaultdict(list)
     for feature in all_features:
@@ -582,7 +582,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         prelim_predictions = []
         # keep track of the minimum score of null start+end of position 0
         score_null = 1000000  # large and positive
-        min_null_feature_index = 0  # the paragraph slice with min mull score
+        min_null_feature_index = 0  # the paragraph slice with min null score
         null_start_logit = 0  # the start logit at the slice with min null score
         null_end_logit = 0  # the end logit at the slice with min null score
 
@@ -680,7 +680,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                     start_logit=pred.start_logit,
                     end_logit=pred.end_logit))
 
-        # if we didn't inlude the empty option in the n-best, inlcude it
+        # if we didn't include the empty option in the n-best, include it
         if is_version2:
             if "" not in seen_predictions:
                 nbest.append(
@@ -706,6 +706,15 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         probs = _compute_softmax(total_scores)
 
+        """
+        {
+            "question_id": 403770, 
+            "question_type": "YES_NO", 
+            "answers": ["我都是免费几分钟测试可以玩而已。"], 
+            "entity_answers": [[]], 
+            "yesno_answers": []
+        }
+        """
         nbest_json = []
         for (i, entry) in enumerate(nbest):
             output = collections.OrderedDict()
@@ -717,7 +726,6 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         assert len(nbest_json) >= 1
 
-        
         if not is_version2:
             all_predictions[example.qas_id] = nbest_json[0]["text"]
         else:
@@ -731,10 +739,23 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                 all_predictions[example.qas_id] = best_non_null_entry.text
         all_nbest_json[example.qas_id] = nbest_json
 
-    with open(output_prediction_file, "w") as writer:
+    """
+    predictions.json format:
+        {
+            "56ddde6b9a695914005b9628": "a region in France",
+            "5ad39d53604f3c001a3fe8d2": "Normands; Latin: Normanni) were the people who in the 10th and 11th centuries",
+            "5ad39d53604f3c001a3fe8d3": "West Francia",
+            "5ad3a266604f3c001a3fea27": "political, cultural and military",
+            "5ad3a266604f3c001a3fea28": "The Normans",
+            "5ad3a266604f3c001a3fea29": "",
+            "56dde0379a695914005b9636": "\"Norseman, Viking\"",
+            ......
+        }
+    """
+    with open(output_prediction_file, "w") as writer:  # predictions.json
         writer.write(json.dumps(all_predictions, indent=4) + "\n")
 
-    with open(output_nbest_file, "w") as writer:
+    with open(output_nbest_file, "w") as writer:  # nbest_predictions.json
         writer.write(json.dumps(all_nbest_json, indent=4) + "\n")
     
     if is_version2:
@@ -766,8 +787,8 @@ def get_final_text(pred_text, orig_text, do_lower_case, verbose_logging=False):
     #
     # What we really want to return is "Steve Smith".
     #
-    # Therefore, we have to apply a semi-complicated alignment heruistic between
-    # `pred_text` and `orig_text` to get a character-to-charcter alignment. This
+    # Therefore, we have to apply a semi-complicated alignment heuristic between
+    # `pred_text` and `orig_text` to get a character-to-character alignment. This
     # can fail in certain cases in which case we just return `orig_text`.
 
     def _strip_spaces(text):

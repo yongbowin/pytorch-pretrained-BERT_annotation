@@ -57,7 +57,7 @@
           <entry key="csv" value="2" />
           <entry key="json" value="1" />
           <entry key="md" value="4" />
-          <entry key="py" value="115" />
+          <entry key="py" value="117" />
           <entry key="pyi" value="1" />
           <entry key="sh" value="1" />
           <entry key="txt" value="7" />
@@ -69,7 +69,7 @@
           <entry key="JSON" value="1" />
           <entry key="Markdown" value="4" />
           <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="115" />
+          <entry key="Python" value="117" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -78,15 +78,15 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="6" />
           <entry key="md" value="117" />
-          <entry key="py" value="9230" />
+          <entry key="py" value="9306" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="9240" />
-          <entry key="SQL" value="3" />
+          <entry key="Python" value="9315" />
+          <entry key="SQL" value="4" />
         </counts>
       </usages-collector>
     </session>
@@ -153,8 +153,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_squad_dr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="555" column="4" selection-start-line="555" selection-start-column="4" selection-end-line="555" selection-end-column="4" />
+            <state relative-caret-position="374">
+              <caret line="751" column="18" lean-forward="true" selection-start-line="751" selection-start-column="18" selection-end-line="751" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -162,8 +162,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/collections/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="356" column="4" selection-start-line="356" selection-start-column="4" selection-end-line="356" selection-end-column="4" />
+            <state relative-caret-position="290">
+              <caret line="70" column="6" selection-start-line="70" selection-start-column="6" selection-end-line="70" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -191,8 +191,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>BertForPreTraining</find>
-      <find>from_pretrained</find>
       <find>learning_rate</find>
       <find>BertForSequenceClassification</find>
       <find>check</find>
@@ -221,6 +219,8 @@
       <find>PRETRAINED_VOCAB_ARCHIVE_MAP</find>
       <find>do_train</find>
       <find>tokenizer</find>
+      <find>charcter</find>
+      <find>heruistic</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -529,13 +529,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-510048424/torch/_C/device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="35" column="8" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/squad_v1.1_arch_sample.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="76">
@@ -835,13 +828,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/collections/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="356" column="4" selection-start-line="356" selection-start-column="4" selection-end-line="356" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_squad.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="647">
@@ -859,10 +845,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-510048424/_collections.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="25" column="26" lean-forward="true" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/collections/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="70" column="6" selection-start-line="70" selection-start-column="6" selection-end-line="70" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_squad_dr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="555" column="4" selection-start-line="555" selection-start-column="4" selection-end-line="555" selection-end-column="4" />
+        <state relative-caret-position="374">
+          <caret line="751" column="18" lean-forward="true" selection-start-line="751" selection-start-column="18" selection-end-line="751" selection-end-column="18" />
         </state>
       </provider>
     </entry>
