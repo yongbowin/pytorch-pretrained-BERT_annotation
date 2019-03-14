@@ -68,9 +68,12 @@ class SquadExample(object):
         self.is_impossible = is_impossible
 
     def __str__(self):
+        """__str__使用：被打印的时候需要以字符串的形式输出的时候，就会找到这个方法，并将返回值打印出来"""
         return self.__repr__()
 
     def __repr__(self):
+        """返回一个可以用来表示对象的可打印字符串,
+        同时定义 __repr__ 方法和 __str__ 方法时，print() 方法会调用 __str__ 方法."""
         s = ""
         s += "qas_id: %s" % (self.qas_id)
         s += ", question_text: %s" % (
@@ -117,28 +120,102 @@ class InputFeatures(object):
 
 def read_squad_examples(input_file, is_training):
     """Read a SQuAD json file into a list of SquadExample."""
+    """
+    Data format:
+        {
+            "version": xxx,
+            "data": []   ======> length=442, type=list
+        }
+        
+        "data": [
+            {"title": xxx, "paragraphs": xxxx},
+            {xxx},
+            ......
+        ]
+        
+        "paragraphs": [
+            {"qas": [xxx, ...], "context": xxx},
+            {xxx},
+            ......
+        ]
+        
+        # ----------------------------------------
+        {
+            'qas': [{
+                'question': 'When did Beyonce start becoming popular?',
+                'id': '56be85543aeaaa14008c9063',
+                'answers': [{
+                    'text': 'in the late 1990s',
+                    'answer_start': 269
+                }],
+                'is_impossible': False
+            }, {
+                'question': "What was the name of Beyoncé's first solo album?",
+                'id': '56d43ce42ccc5a1400d830b5',
+                'answers': [{
+                    'text': 'Dangerously in Love',
+                    'answer_start': 505
+                }],
+                'is_impossible': False
+            }, 
+                ......
+            ],
+            'context': 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September 4, 1981) is an American 
+                        singer, songwriter, record producer and actress. Born and raised in Houston, Texas, she performed 
+                        in various singing and dancing competitions as a child, and rose to fame in the late 1990s as lead 
+                        singer of R&B girl-group Destiny\'s Child. Managed by her father, Mathew Knowles, the group became 
+                        one of the world\'s best-selling girl groups of all time. Their hiatus saw the release of Beyoncé\'s 
+                        debut album, Dangerously in Love (2003), which established her as a solo artist worldwide, earned 
+                        five Grammy Awards and featured the Billboard Hot 100 number-one singles "Crazy in Love" and "Baby Boy".'
+        }
+    """
     with open(input_file, "r", encoding='utf-8') as reader:
         source = json.load(reader)
         input_data = source["data"]
         version = source["version"]
 
     def is_whitespace(c):
+        """To judge the shart position of a new word."""
         if c == " " or c == "\t" or c == "\r" or c == "\n" or ord(c) == 0x202F:
             return True
         return False
 
     examples = []
     for entry in input_data:
+        """
+        entry format:
+            {"title": xxx, "paragraphs": xxxx}
+        """
         for paragraph in entry["paragraphs"]:
+            """
+            paragraph format:
+                {"qas": [xxx, ...], "context": xxx}
+            """
+
+            """
+            paragraph_text = 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say).'
+            
+            doc_tokens:
+                ['Beyoncé', 'Giselle', 'Knowles-Carter', '(/biːˈjɒnseɪ/', 'bee-YON-say).']
+            char_to_word_offset:
+                [
+                    0, 0, 0, 0, 0, 0, 0, 0, 
+                    1, 1, 1, 1, 1, 1, 1, 1, 
+                    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+                    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
+                    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+                ]
+            """
             paragraph_text = paragraph["context"]
             doc_tokens = []
             char_to_word_offset = []
             prev_is_whitespace = True
-            for c in paragraph_text:
+            for c in paragraph_text:  # by char
                 if is_whitespace(c):
                     prev_is_whitespace = True
                 else:
                     if prev_is_whitespace:
+                        """if the prev char is ' ' and so on, say that the current char is in a new word."""
                         doc_tokens.append(c)
                     else:
                         doc_tokens[-1] += c
@@ -146,39 +223,63 @@ def read_squad_examples(input_file, is_training):
                 char_to_word_offset.append(len(doc_tokens) - 1)
 
             for qa in paragraph["qas"]:
+                """
+                qa:
+                    {
+                        'question': 'When did Beyonce start becoming popular?',
+                        'id': '56be85543aeaaa14008c9063',
+                        'answers': [{
+                            'text': 'in the late 1990s',
+                            'answer_start': 269
+                        }],
+                        'is_impossible': False
+                    }
+                """
                 qas_id = qa["id"]
                 question_text = qa["question"]
                 start_position = None
                 end_position = None
                 orig_answer_text = None
-                is_impossible = False
+                is_impossible = False  # to indicate whether has answer.
                 if is_training:
                     if version == "v2.0":
                         is_impossible = qa["is_impossible"]
                     if (len(qa["answers"]) != 1) and (not is_impossible):
+                        """For training, each question should have exactly 1 answer."""
                         raise ValueError(
                             "For training, each question should have exactly 1 answer.")
                     if not is_impossible:
                         answer = qa["answers"][0]
                         orig_answer_text = answer["text"]
-                        answer_offset = answer["answer_start"]
-                        answer_length = len(orig_answer_text)
-                        start_position = char_to_word_offset[answer_offset]
-                        end_position = char_to_word_offset[answer_offset + answer_length - 1]
+                        answer_offset = answer["answer_start"]  # by char
+                        answer_length = len(orig_answer_text)  # by char
+                        """start_position is the order num of word in a text (第几个词), not char position."""
+                        start_position = char_to_word_offset[answer_offset]  # by word
+                        end_position = char_to_word_offset[answer_offset + answer_length - 1]  # by word
                         # Only add answers where the text can be exactly recovered from the
                         # document. If this CAN'T happen it's likely due to weird Unicode
                         # stuff so we will just skip the example.
                         #
                         # Note that this means for training mode, every example is NOT
                         # guaranteed to be preserved.
+                        """
+                        仅添加可从文档中准确恢复文本的答案。如果这不可能发生，可能是由于奇怪的Unicode东西，所以我们将跳过这个例子。
+                        请注意，这意味着对于培训模式，不保证每一个示例都被保留。
+                        """
+                        """The answer include current-position-word itself."""
                         actual_text = " ".join(doc_tokens[start_position:(end_position + 1)])
+                        """
+                        orig_answer_text: Is the evaluator answer, this answer maybe not in text, maybe the summary of evaluator.
+                        actual_text: Is a paragraph in text.
+                        """
                         cleaned_answer_text = " ".join(
                             whitespace_tokenize(orig_answer_text))
                         if actual_text.find(cleaned_answer_text) == -1:
                             logger.warning("Could not find answer: '%s' vs. '%s'",
                                             actual_text, cleaned_answer_text)
                             continue
-                    else: 
+                    else:
+                        """Has no answer."""
                         start_position = -1
                         end_position = -1
                         orig_answer_text = ""
@@ -202,10 +303,23 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
     unique_id = 1000000000
 
     features = []
+    """
+    examples:
+        example = SquadExample(
+                        qas_id=qas_id,
+                        question_text=question_text,
+                        doc_tokens=doc_tokens,
+                        orig_answer_text=orig_answer_text,
+                        start_position=start_position,
+                        end_position=end_position,
+                        is_impossible=is_impossible)
+        
+        examples=[example1, example2, example3, ......]
+    """
     for (example_index, example) in enumerate(examples):
-        query_tokens = tokenizer.tokenize(example.question_text)
+        query_tokens = tokenizer.tokenize(example.question_text)  # BertTokenizer
 
-        if len(query_tokens) > max_query_length:
+        if len(query_tokens) > max_query_length:  # max_query_length=64(default)
             query_tokens = query_tokens[0:max_query_length]
 
         tok_to_orig_index = []
@@ -213,14 +327,14 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
         all_doc_tokens = []
         for (i, token) in enumerate(example.doc_tokens):
             orig_to_tok_index.append(len(all_doc_tokens))
-            sub_tokens = tokenizer.tokenize(token)
+            sub_tokens = tokenizer.tokenize(token)  # eg: puppeteer --> ['puppet', '##eer']
             for sub_token in sub_tokens:
                 tok_to_orig_index.append(i)
                 all_doc_tokens.append(sub_token)
 
         tok_start_position = None
         tok_end_position = None
-        if is_training and example.is_impossible:
+        if is_training and example.is_impossible:  # has no answer.
             tok_start_position = -1
             tok_end_position = -1
         if is_training and not example.is_impossible:
@@ -234,6 +348,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                 example.orig_answer_text)
 
         # The -3 accounts for [CLS], [SEP] and [SEP]
+        """ `max_seq_length` is the length of all tokens, not chars."""
         max_tokens_for_doc = max_seq_length - len(query_tokens) - 3
 
         # We can have documents that are longer than the maximum sequence length.
@@ -339,8 +454,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                     answer_text = " ".join(tokens[start_position:(end_position + 1)])
                     logger.info("start_position: %d" % (start_position))
                     logger.info("end_position: %d" % (end_position))
-                    logger.info(
-                        "answer: %s" % (answer_text))
+                    logger.info("answer: %s" % (answer_text))
 
             features.append(
                 InputFeatures(
@@ -435,7 +549,6 @@ def _check_is_max_context(doc_spans, cur_span_index, position):
     return cur_span_index == best_span_index
 
 
-
 RawResult = collections.namedtuple("RawResult",
                                    ["unique_id", "start_logits", "end_logits"])
 
@@ -444,8 +557,8 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                       max_answer_length, do_lower_case, output_prediction_file,
                       output_nbest_file, output_null_log_odds_file, verbose_logging, is_version2, null_score_diff_threshold):
     """Write final predictions to the json file and log-odds of null if needed."""
-    logger.info("Writing predictions to: %s" % (output_prediction_file))
-    logger.info("Writing nbest to: %s" % (output_nbest_file))
+    logger.info("Writing predictions to: %s" % (output_prediction_file))  # predictions.json
+    logger.info("Writing nbest to: %s" % (output_nbest_file))  # nbest_predictions.json
 
     example_index_to_features = collections.defaultdict(list)
     for feature in all_features:
@@ -469,7 +582,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         prelim_predictions = []
         # keep track of the minimum score of null start+end of position 0
         score_null = 1000000  # large and positive
-        min_null_feature_index = 0  # the paragraph slice with min mull score
+        min_null_feature_index = 0  # the paragraph slice with min null score
         null_start_logit = 0  # the start logit at the slice with min null score
         null_end_logit = 0  # the end logit at the slice with min null score
 
@@ -567,7 +680,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                     start_logit=pred.start_logit,
                     end_logit=pred.end_logit))
 
-        # if we didn't inlude the empty option in the n-best, inlcude it
+        # if we didn't include the empty option in the n-best, include it
         if is_version2:
             if "" not in seen_predictions:
                 nbest.append(
@@ -593,6 +706,15 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         probs = _compute_softmax(total_scores)
 
+        """
+        {
+            "question_id": 403770, 
+            "question_type": "YES_NO", 
+            "answers": ["我都是免费几分钟测试可以玩而已。"], 
+            "entity_answers": [[]], 
+            "yesno_answers": []
+        }
+        """
         nbest_json = []
         for (i, entry) in enumerate(nbest):
             output = collections.OrderedDict()
@@ -604,7 +726,6 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         assert len(nbest_json) >= 1
 
-        
         if not is_version2:
             all_predictions[example.qas_id] = nbest_json[0]["text"]
         else:
@@ -618,10 +739,23 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                 all_predictions[example.qas_id] = best_non_null_entry.text
         all_nbest_json[example.qas_id] = nbest_json
 
-    with open(output_prediction_file, "w") as writer:
+    """
+    predictions.json format:
+        {
+            "56ddde6b9a695914005b9628": "a region in France",
+            "5ad39d53604f3c001a3fe8d2": "Normands; Latin: Normanni) were the people who in the 10th and 11th centuries",
+            "5ad39d53604f3c001a3fe8d3": "West Francia",
+            "5ad3a266604f3c001a3fea27": "political, cultural and military",
+            "5ad3a266604f3c001a3fea28": "The Normans",
+            "5ad3a266604f3c001a3fea29": "",
+            "56dde0379a695914005b9636": "\"Norseman, Viking\"",
+            ......
+        }
+    """
+    with open(output_prediction_file, "w") as writer:  # predictions.json
         writer.write(json.dumps(all_predictions, indent=4) + "\n")
 
-    with open(output_nbest_file, "w") as writer:
+    with open(output_nbest_file, "w") as writer:  # nbest_predictions.json
         writer.write(json.dumps(all_nbest_json, indent=4) + "\n")
     
     if is_version2:
@@ -653,8 +787,8 @@ def get_final_text(pred_text, orig_text, do_lower_case, verbose_logging=False):
     #
     # What we really want to return is "Steve Smith".
     #
-    # Therefore, we have to apply a semi-complicated alignment heruistic between
-    # `pred_text` and `orig_text` to get a character-to-charcter alignment. This
+    # Therefore, we have to apply a semi-complicated alignment heuristic between
+    # `pred_text` and `orig_text` to get a character-to-character alignment. This
     # can fail in certain cases in which case we just return `orig_text`.
 
     def _strip_spaces(text):
@@ -898,6 +1032,19 @@ def main():
 
     tokenizer = BertTokenizer.from_pretrained(args.bert_model)
 
+    """
+    read_squad_examples() return:
+        example = SquadExample(
+                        qas_id=qas_id,
+                        question_text=question_text,
+                        doc_tokens=doc_tokens,
+                        orig_answer_text=orig_answer_text,
+                        start_position=start_position,
+                        end_position=end_position,
+                        is_impossible=is_impossible)
+        
+        examples=[example1, example2, example3, ......]
+    """
     train_examples = None
     num_train_steps = None
     if args.do_train:
@@ -906,7 +1053,7 @@ def main():
         num_train_steps = int(
             len(train_examples) / args.train_batch_size / args.gradient_accumulation_steps * args.num_train_epochs)
 
-    # Prepare model
+    # Prepare model, `cache_dir` is pre-trained model path
     model = BertForQuestionAnswering.from_pretrained(args.bert_model,
                 cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(args.local_rank))
 
@@ -972,9 +1119,9 @@ def main():
             train_features = convert_examples_to_features(
                 examples=train_examples,
                 tokenizer=tokenizer,
-                max_seq_length=args.max_seq_length,
-                doc_stride=args.doc_stride,
-                max_query_length=args.max_query_length,
+                max_seq_length=args.max_seq_length,  # default=384
+                doc_stride=args.doc_stride,  # default=128
+                max_query_length=args.max_query_length,  # default=64
                 is_training=True)
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
                 logger.info("  Saving train features into cached file %s", cached_train_features_file)
@@ -1082,6 +1229,10 @@ def main():
         output_prediction_file = os.path.join(args.output_dir, "predictions.json")
         output_nbest_file = os.path.join(args.output_dir, "nbest_predictions.json")
         output_null_log_odds_file = os.path.join(args.output_dir, "null_odds.json")
+        """
+        n_best_size = 20(default)
+        max_answer_length = 30(default)
+        """
         write_predictions(eval_examples, eval_features, all_results,
                           args.n_best_size, args.max_answer_length,
                           args.do_lower_case, output_prediction_file,
