@@ -68,9 +68,12 @@ class SquadExample(object):
         self.is_impossible = is_impossible
 
     def __str__(self):
+        """__str__使用：被打印的时候需要以字符串的形式输出的时候，就会找到这个方法，并将返回值打印出来"""
         return self.__repr__()
 
     def __repr__(self):
+        """返回一个可以用来表示对象的可打印字符串,
+        同时定义 __repr__ 方法和 __str__ 方法时，print() 方法会调用 __str__ 方法."""
         s = ""
         s += "qas_id: %s" % (self.qas_id)
         s += ", question_text: %s" % (
@@ -275,7 +278,8 @@ def read_squad_examples(input_file, is_training):
                             logger.warning("Could not find answer: '%s' vs. '%s'",
                                             actual_text, cleaned_answer_text)
                             continue
-                    else: 
+                    else:
+                        """Has no answer."""
                         start_position = -1
                         end_position = -1
                         orig_answer_text = ""
