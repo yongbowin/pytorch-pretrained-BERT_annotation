@@ -117,28 +117,102 @@ class InputFeatures(object):
 
 def read_squad_examples(input_file, is_training):
     """Read a SQuAD json file into a list of SquadExample."""
+    """
+    Data format:
+        {
+            "version": xxx,
+            "data": []   ======> length=442, type=list
+        }
+        
+        "data": [
+            {"title": xxx, "paragraphs": xxxx},
+            {xxx},
+            ......
+        ]
+        
+        "paragraphs": [
+            {"qas": [xxx, ...], "context": xxx},
+            {xxx},
+            ......
+        ]
+        
+        # ----------------------------------------
+        {
+            'qas': [{
+                'question': 'When did Beyonce start becoming popular?',
+                'id': '56be85543aeaaa14008c9063',
+                'answers': [{
+                    'text': 'in the late 1990s',
+                    'answer_start': 269
+                }],
+                'is_impossible': False
+            }, {
+                'question': "What was the name of Beyoncé's first solo album?",
+                'id': '56d43ce42ccc5a1400d830b5',
+                'answers': [{
+                    'text': 'Dangerously in Love',
+                    'answer_start': 505
+                }],
+                'is_impossible': False
+            }, 
+                ......
+            ],
+            'context': 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September 4, 1981) is an American 
+                        singer, songwriter, record producer and actress. Born and raised in Houston, Texas, she performed 
+                        in various singing and dancing competitions as a child, and rose to fame in the late 1990s as lead 
+                        singer of R&B girl-group Destiny\'s Child. Managed by her father, Mathew Knowles, the group became 
+                        one of the world\'s best-selling girl groups of all time. Their hiatus saw the release of Beyoncé\'s 
+                        debut album, Dangerously in Love (2003), which established her as a solo artist worldwide, earned 
+                        five Grammy Awards and featured the Billboard Hot 100 number-one singles "Crazy in Love" and "Baby Boy".'
+        }
+    """
     with open(input_file, "r", encoding='utf-8') as reader:
         source = json.load(reader)
         input_data = source["data"]
         version = source["version"]
 
     def is_whitespace(c):
+        """To judge the shart position of a new word."""
         if c == " " or c == "\t" or c == "\r" or c == "\n" or ord(c) == 0x202F:
             return True
         return False
 
     examples = []
     for entry in input_data:
+        """
+        entry format:
+            {"title": xxx, "paragraphs": xxxx}
+        """
         for paragraph in entry["paragraphs"]:
+            """
+            paragraph format:
+                {"qas": [xxx, ...], "context": xxx}
+            """
+
+            """
+            paragraph_text = 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say).'
+            
+            doc_tokens:
+                ['Beyoncé', 'Giselle', 'Knowles-Carter', '(/biːˈjɒnseɪ/', 'bee-YON-say).']
+            char_to_word_offset:
+                [
+                    0, 0, 0, 0, 0, 0, 0, 0, 
+                    1, 1, 1, 1, 1, 1, 1, 1, 
+                    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+                    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
+                    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+                ]
+            """
             paragraph_text = paragraph["context"]
             doc_tokens = []
             char_to_word_offset = []
             prev_is_whitespace = True
-            for c in paragraph_text:
+            for c in paragraph_text:  # by char
                 if is_whitespace(c):
                     prev_is_whitespace = True
                 else:
                     if prev_is_whitespace:
+                        """if the prev char is ' ' and so on, say that the current char is in a new word."""
                         doc_tokens.append(c)
                     else:
                         doc_tokens[-1] += c
@@ -146,32 +220,55 @@ def read_squad_examples(input_file, is_training):
                 char_to_word_offset.append(len(doc_tokens) - 1)
 
             for qa in paragraph["qas"]:
+                """
+                qa:
+                    {
+                        'question': 'When did Beyonce start becoming popular?',
+                        'id': '56be85543aeaaa14008c9063',
+                        'answers': [{
+                            'text': 'in the late 1990s',
+                            'answer_start': 269
+                        }],
+                        'is_impossible': False
+                    }
+                """
                 qas_id = qa["id"]
                 question_text = qa["question"]
                 start_position = None
                 end_position = None
                 orig_answer_text = None
-                is_impossible = False
+                is_impossible = False  # to indicate whether has answer.
                 if is_training:
                     if version == "v2.0":
                         is_impossible = qa["is_impossible"]
                     if (len(qa["answers"]) != 1) and (not is_impossible):
+                        """For training, each question should have exactly 1 answer."""
                         raise ValueError(
                             "For training, each question should have exactly 1 answer.")
                     if not is_impossible:
                         answer = qa["answers"][0]
                         orig_answer_text = answer["text"]
-                        answer_offset = answer["answer_start"]
-                        answer_length = len(orig_answer_text)
-                        start_position = char_to_word_offset[answer_offset]
-                        end_position = char_to_word_offset[answer_offset + answer_length - 1]
+                        answer_offset = answer["answer_start"]  # by char
+                        answer_length = len(orig_answer_text)  # by char
+                        """start_position is the order num of word in a text (第几个词), not char position."""
+                        start_position = char_to_word_offset[answer_offset]  # by word
+                        end_position = char_to_word_offset[answer_offset + answer_length - 1]  # by word
                         # Only add answers where the text can be exactly recovered from the
                         # document. If this CAN'T happen it's likely due to weird Unicode
                         # stuff so we will just skip the example.
                         #
                         # Note that this means for training mode, every example is NOT
                         # guaranteed to be preserved.
+                        """
+                        仅添加可从文档中准确恢复文本的答案。如果这不可能发生，可能是由于奇怪的Unicode东西，所以我们将跳过这个例子。
+                        请注意，这意味着对于培训模式，不保证每一个示例都被保留。
+                        """
+                        """The answer include current-position-word itself."""
                         actual_text = " ".join(doc_tokens[start_position:(end_position + 1)])
+                        """
+                        orig_answer_text: Is the evaluator answer, this answer maybe not in text, maybe the summary of evaluator.
+                        actual_text: Is a paragraph in text.
+                        """
                         cleaned_answer_text = " ".join(
                             whitespace_tokenize(orig_answer_text))
                         if actual_text.find(cleaned_answer_text) == -1:

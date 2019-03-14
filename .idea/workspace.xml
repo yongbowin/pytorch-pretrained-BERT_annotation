@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5e3022bd-a31c-415a-bbc4-2f14ea5a2ffb" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/run_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ttt.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ttt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/run_squad2.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_squad2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,6 +19,7 @@
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$run_squad.coverage" NAME="run_squad Coverage Results" MODIFIED="1548899512331" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test1.coverage" NAME="test1 Coverage Results" MODIFIED="1548840969921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test_tokenization.coverage" NAME="test_tokenization Coverage Results" MODIFIED="1550743187358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$analysic_squad_data.coverage" NAME="analysic_squad_data Coverage Results" MODIFIED="1552532750737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pytorch_pretrained_BERT_annotation$test_BertModel.coverage" NAME="test_BertModel Coverage Results" MODIFIED="1550818300273" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
   <component name="DatabaseView">
@@ -40,15 +40,17 @@
     <session id="1184885413">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="7" />
+          <entry key="project.closed" value="8" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.20" value="1" />
           <entry key="project.open.time.40" value="1" />
+          <entry key="project.open.time.62" value="1" />
           <entry key="project.open.time.66" value="1" />
           <entry key="project.open.time.8" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="7" />
+          <entry key="project.opened" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -56,7 +58,7 @@
           <entry key="csv" value="2" />
           <entry key="json" value="1" />
           <entry key="md" value="4" />
-          <entry key="py" value="104" />
+          <entry key="py" value="110" />
           <entry key="pyi" value="1" />
           <entry key="sh" value="1" />
           <entry key="txt" value="7" />
@@ -68,7 +70,7 @@
           <entry key="JSON" value="1" />
           <entry key="Markdown" value="4" />
           <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="104" />
+          <entry key="Python" value="110" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -77,15 +79,15 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="6" />
           <entry key="md" value="117" />
-          <entry key="py" value="7391" />
+          <entry key="py" value="8838" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="7402" />
-          <entry key="SQL" value="2" />
+          <entry key="Python" value="8848" />
+          <entry key="SQL" value="3" />
         </counts>
       </usages-collector>
     </session>
@@ -95,8 +97,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="48" column="34" lean-forward="true" selection-start-line="48" selection-start-column="34" selection-end-line="48" selection-end-column="34" />
+            <state relative-caret-position="832">
+              <caret line="48" column="34" selection-start-line="48" selection-start-column="34" selection-end-line="48" selection-end-column="34" />
               <folding>
                 <element signature="e#735#773#0" expanded="true" />
               </folding>
@@ -107,8 +109,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/run_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="834" column="33" lean-forward="true" selection-start-line="834" selection-start-column="33" selection-end-line="834" selection-end-column="33" />
+            <state relative-caret-position="832">
+              <caret line="834" column="33" selection-start-line="834" selection-start-column="33" selection-end-line="834" selection-end-column="33" />
               <folding>
                 <element signature="e#740#804#0" expanded="true" />
               </folding>
@@ -117,19 +119,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/utils/data/dataset.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="509">
-              <caret line="34" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-760">
-              <caret line="128" column="61" selection-start-line="128" selection-start-column="52" selection-end-line="128" selection-end-column="61" />
+            <state relative-caret-position="-2622">
+              <caret line="72" column="16" lean-forward="true" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="16" />
               <folding>
                 <element signature="e#673#711#0" expanded="true" />
               </folding>
@@ -138,32 +131,9 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/examples/run_squad.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19228">
-              <caret line="1034" column="55" selection-start-line="1034" selection-start-column="55" selection-end-line="1034" selection-end-column="55" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/examples/create_csv.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="58" column="24" lean-forward="true" selection-start-line="58" selection-start-column="24" selection-end-line="58" selection-end-column="24" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-                <marker date="1552041071492" expanded="true" signature="818:1056" ph="..." />
-                <marker date="1552041071492" expanded="true" signature="2808:2809" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/clean_result.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
+            <state relative-caret-position="380">
               <caret line="20" selection-start-line="20" selection-end-line="20" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -173,19 +143,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/examples/tt.py">
+        <entry file="file://$PROJECT_DIR$/examples/analysic_squad_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="13" selection-start-line="13" selection-end-line="13" />
+            <state relative-caret-position="395">
+              <caret line="32" column="35" lean-forward="true" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/examples/ttt.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/examples/run_squad_dr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="1" column="19" lean-forward="true" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
+            <state relative-caret-position="340">
+              <caret line="276" column="36" lean-forward="true" selection-start-line="276" selection-start-column="36" selection-end-line="276" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -209,7 +179,6 @@
       <find>get_train_examples</find>
       <find>data_dir</find>
       <find>FLAG</find>
-      <find>do_train</find>
       <find>self.guid</find>
       <find>tokenization</find>
       <find>guid</find>
@@ -231,6 +200,7 @@
       <find>BertTokenizer</find>
       <find>PRETRAINED_VOCAB_ARCHIVE_MAP</find>
       <find>tokenizer</find>
+      <find>do_train</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -248,7 +218,6 @@
         <option value="$PROJECT_DIR$/examples/test_squad.py" />
         <option value="$PROJECT_DIR$/examples/run_squad.py" />
         <option value="$PROJECT_DIR$/examples/evaluate-v1.1.py" />
-        <option value="$PROJECT_DIR$/examples/run_squad2.py" />
         <option value="$PROJECT_DIR$/examples/evaluate-v2.0.py" />
         <option value="$PROJECT_DIR$/examples/test_tokenization.py" />
         <option value="$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py" />
@@ -262,6 +231,9 @@
         <option value="$PROJECT_DIR$/examples/stati_yesno.py" />
         <option value="$PROJECT_DIR$/examples/ttt.py" />
         <option value="$PROJECT_DIR$/examples/run_classifier.py" />
+        <option value="$PROJECT_DIR$/examples/run_squad2.py" />
+        <option value="$PROJECT_DIR$/examples/analysic_squad_data.py" />
+        <option value="$PROJECT_DIR$/examples/run_squad_dr.py" />
       </list>
     </option>
   </component>
@@ -285,7 +257,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -322,14 +293,20 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../DuReader_annotation" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/examples" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -343,7 +320,29 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ttt">
+  <component name="RunManager" selected="Python.analysic_squad_data">
+    <configuration name="analysic_squad_data" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pytorch-pretrained-BERT_annotation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/analysic_squad_data.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test_BertModel" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch-pretrained-BERT_annotation" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -432,35 +431,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for tokenization_test.TokenizationTest.test_full_tokenizer" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <module name="pytorch-pretrained-BERT_annotation" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;tokenization_test.TokenizationTest.test_full_tokenizer&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python tests.Unittests for tokenization_test.TokenizationTest.test_full_tokenizer" />
       <item itemvalue="Python.test_tokenization" />
       <item itemvalue="Python.test_BertModel" />
       <item itemvalue="Python.tt" />
       <item itemvalue="Python.ttt" />
+      <item itemvalue="Python.analysic_squad_data" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.analysic_squad_data" />
         <item itemvalue="Python.ttt" />
         <item itemvalue="Python.tt" />
         <item itemvalue="Python.test_BertModel" />
         <item itemvalue="Python.test_tokenization" />
-        <item itemvalue="Python tests.Unittests for tokenization_test.TokenizationTest.test_full_tokenizer" />
       </list>
     </recent_temporary>
   </component>
@@ -493,13 +477,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="36" width="1920" height="1044" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18796591" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19116081" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32934782" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.29673913" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.17282608" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.19782609" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -524,14 +509,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/examples/test.py" />
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="4" column="3" lean-forward="true" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-510048424/torch/_C/device.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="53">
@@ -735,16 +712,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/stati_yesno.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/run_squad2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-943">
-          <caret line="806" column="37" selection-start-line="806" selection-start-column="37" selection-end-line="806" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/stati_yesno.py" />
     <entry file="file://$PROJECT_DIR$/examples/run_swag.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="395">
@@ -783,40 +751,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/run_squad.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19228">
-          <caret line="1034" column="55" selection-start-line="1034" selection-start-column="55" selection-end-line="1034" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/clean_result.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/tt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="48" column="34" lean-forward="true" selection-start-line="48" selection-start-column="34" selection-end-line="48" selection-end-column="34" />
-          <folding>
-            <element signature="e#735#773#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/utils/data/sampler.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="298">
@@ -831,49 +765,81 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/ttt.py">
+    <entry file="file://$PROJECT_DIR$/examples/tt.py" />
+    <entry file="file://$PROJECT_DIR$/examples/ttt.py" />
+    <entry file="file://$PROJECT_DIR$/examples/create_csv.py" />
+    <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="1" column="19" lean-forward="true" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
+        <state relative-caret-position="832">
+          <caret line="48" column="34" selection-start-line="48" selection-start-column="34" selection-end-line="48" selection-end-column="34" />
+          <folding>
+            <element signature="e#735#773#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/utils/data/dataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="509">
+        <state relative-caret-position="570">
           <caret line="34" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py">
+    <entry file="file://$PROJECT_DIR$/examples/run_squad2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-760">
-          <caret line="128" column="61" selection-start-line="128" selection-start-column="52" selection-end-line="128" selection-end-column="61" />
-          <folding>
-            <element signature="e#673#711#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="281">
+          <caret line="117" column="4" selection-start-line="117" selection-start-column="4" selection-end-line="117" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="834" column="33" lean-forward="true" selection-start-line="834" selection-start-column="33" selection-end-line="834" selection-end-column="33" />
+        <state relative-caret-position="832">
+          <caret line="834" column="33" selection-start-line="834" selection-start-column="33" selection-end-line="834" selection-end-column="33" />
           <folding>
             <element signature="e#740#804#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/create_csv.py">
+    <entry file="file://$PROJECT_DIR$/examples/run_squad.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="58" column="24" lean-forward="true" selection-start-line="58" selection-start-column="24" selection-end-line="58" selection-end-column="24" />
+        <state relative-caret-position="-422">
+          <caret line="125" column="24" lean-forward="true" selection-start-line="125" selection-start-column="24" selection-end-line="125" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/analysic_squad_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="32" column="35" lean-forward="true" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/clean_result.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
-            <marker date="1552041071492" expanded="true" signature="818:1056" ph="..." />
-            <marker date="1552041071492" expanded="true" signature="2808:2809" ph="..." />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2622">
+          <caret line="72" column="16" lean-forward="true" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="16" />
+          <folding>
+            <element signature="e#673#711#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/run_squad_dr.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="276" column="36" lean-forward="true" selection-start-line="276" selection-start-column="36" selection-end-line="276" selection-end-column="36" />
         </state>
       </provider>
     </entry>
