@@ -146,7 +146,7 @@ def read_squad_examples(input_file, is_training):
                 'id': '56be85543aeaaa14008c9063',
                 'answers': [{
                     'text': 'in the late 1990s',
-                    'answer_start': 269
+                    'answer_start': 269  # by char
                 }],
                 'is_impossible': False
             }, {
@@ -169,6 +169,47 @@ def read_squad_examples(input_file, is_training):
                         five Grammy Awards and featured the Billboard Hot 100 number-one singles "Crazy in Love" and "Baby Boy".'
         }
     """
+
+    """
+    Chinese trainset format: (each line)
+
+    {
+        "documents": [{
+            "is_selected": true,
+            "title": "有什么方法可以在睡眠中死亡?比如在_有问必答_快速问医生",
+            "most_related_para": 1,
+            "segmented_title": ["有", "什么", "方法", "可以", "在", "睡眠", "中", "死亡", "?", "比如", "在", "_", "有问必答", "_", "快速", "问", "医生"],
+            "segmented_paragraphs": [[xx, xx, ...], [...], ...],
+            "paragraphs": [xxx, xxx, xxx, ...],
+            "bs_rank_pos": 0
+        }, {
+            "is_selected": false,
+            "title": "震惊 这样的睡眠方式竟然会导致猝死 - 三九养生堂",
+            "most_related_para": 2,
+            "segmented_title": ["震惊", "这样", "的", "睡眠", "方式", "竟然", "会导致", "猝死", "-", "三九", "养生堂"],
+            "segmented_paragraphs": [xxx, ...],
+            "paragraphs": [xxx, ...],
+            "bs_rank_pos": 1
+        },
+            ......
+        ],
+        "answer_spans": [
+            [4, 11]
+        ],
+        "fake_answers": ["一般是安眠药或者去医院进行安乐死"],
+        "question": "睡觉中猝死的方法",
+        "segmented_answers": [
+            ["一般", "是", "安眠药", "或者", "去", "医院", "进行", "安乐死", "。"]
+        ],
+        "answers": ["一般是安眠药或者去医院进行安乐死。"],
+        "answer_docs": [0],
+        "segmented_question": ["睡觉", "中", "猝死", "的", "方法"],
+        "question_type": "DESCRIPTION",
+        "question_id": 91160,
+        "fact_or_opinion": "OPINION",
+        "match_scores": [0.9411764705882353]
+    }
+    """
     with open(input_file, "r", encoding='utf-8') as reader:
         source = json.load(reader)
         input_data = source["data"]
@@ -187,26 +228,9 @@ def read_squad_examples(input_file, is_training):
             {"title": xxx, "paragraphs": xxxx}
         """
         for paragraph in entry["paragraphs"]:
-            """
-            paragraph format:
-                {"qas": [xxx, ...], "context": xxx}
-            """
 
-            """
-            paragraph_text = 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say).'
-            
-            doc_tokens:
-                ['Beyoncé', 'Giselle', 'Knowles-Carter', '(/biːˈjɒnseɪ/', 'bee-YON-say).']
-            char_to_word_offset:
-                [
-                    0, 0, 0, 0, 0, 0, 0, 0, 
-                    1, 1, 1, 1, 1, 1, 1, 1, 
-                    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
-                    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
-                    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
-                ]
-            """
             paragraph_text = paragraph["context"]
+
             doc_tokens = []
             char_to_word_offset = []
             prev_is_whitespace = True
@@ -251,33 +275,9 @@ def read_squad_examples(input_file, is_training):
                     if not is_impossible:
                         answer = qa["answers"][0]
                         orig_answer_text = answer["text"]
-                        answer_offset = answer["answer_start"]  # by char
-                        answer_length = len(orig_answer_text)  # by char
                         """start_position is the order num of word in a text (第几个词), not char position."""
-                        start_position = char_to_word_offset[answer_offset]  # by word
-                        end_position = char_to_word_offset[answer_offset + answer_length - 1]  # by word
-                        # Only add answers where the text can be exactly recovered from the
-                        # document. If this CAN'T happen it's likely due to weird Unicode
-                        # stuff so we will just skip the example.
-                        #
-                        # Note that this means for training mode, every example is NOT
-                        # guaranteed to be preserved.
-                        """
-                        仅添加可从文档中准确恢复文本的答案。如果这不可能发生，可能是由于奇怪的Unicode东西，所以我们将跳过这个例子。
-                        请注意，这意味着对于培训模式，不保证每一个示例都被保留。
-                        """
-                        """The answer include current-position-word itself."""
-                        actual_text = " ".join(doc_tokens[start_position:(end_position + 1)])
-                        """
-                        orig_answer_text: Is the evaluator answer, this answer maybe not in text, maybe the summary of evaluator.
-                        actual_text: Is a paragraph in text.
-                        """
-                        cleaned_answer_text = " ".join(
-                            whitespace_tokenize(orig_answer_text))
-                        if actual_text.find(cleaned_answer_text) == -1:
-                            logger.warning("Could not find answer: '%s' vs. '%s'",
-                                            actual_text, cleaned_answer_text)
-                            continue
+                        start_position = answer["answer_start"]  # by word
+                        end_position = answer["answer_end"]  # by word
                     else:
                         """Has no answer."""
                         start_position = -1

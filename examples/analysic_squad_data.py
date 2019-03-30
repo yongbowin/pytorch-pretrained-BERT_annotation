@@ -3,16 +3,10 @@ import json
 BASE_PATH = "/home/wyb/data/squad_v2.0/"
 
 
-# with open(BASE_PATH + "train-v2.0.json", "r", encoding='utf-8') as reader:
-#     source = json.load(reader)
-#     input_data = source["data"]
-#     version = source["version"]
-#
-#
-def is_whitespace(c):
-    if c == " " or c == "\t" or c == "\r" or c == "\n" or ord(c) == 0x202F:
-        return True
-    return False
+with open(BASE_PATH + "train-v2.0.json", "r", encoding='utf-8') as reader:
+    source = json.load(reader)
+    input_data = source["data"]
+    version = source["version"]
 #
 #
 # examples = []

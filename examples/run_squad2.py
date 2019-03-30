@@ -146,7 +146,7 @@ def read_squad_examples(input_file, is_training):
                 'id': '56be85543aeaaa14008c9063',
                 'answers': [{
                     'text': 'in the late 1990s',
-                    'answer_start': 269
+                    'answer_start': 269  # by char
                 }],
                 'is_impossible': False
             }, {
@@ -617,7 +617,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                     if end_index < start_index:
                         continue
                     length = end_index - start_index + 1
-                    if length > max_answer_length:
+                    if length > max_answer_length:  # should be modified during deal with chinese corpus.
                         continue
                     prelim_predictions.append(
                         _PrelimPrediction(
@@ -753,10 +753,10 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         }
     """
     with open(output_prediction_file, "w") as writer:  # predictions.json
-        writer.write(json.dumps(all_predictions, indent=4) + "\n")
+        writer.write(json.dumps(all_predictions, ensure_ascii=False, indent=4) + "\n")
 
     with open(output_nbest_file, "w") as writer:  # nbest_predictions.json
-        writer.write(json.dumps(all_nbest_json, indent=4) + "\n")
+        writer.write(json.dumps(all_nbest_json, ensure_ascii=False, indent=4) + "\n")
     
     if is_version2:
         with open(output_null_log_odds_file, "w") as writer:
@@ -1127,6 +1127,25 @@ def main():
                 logger.info("  Saving train features into cached file %s", cached_train_features_file)
                 with open(cached_train_features_file, "wb") as writer:
                     pickle.dump(train_features, writer)
+
+
+        try:
+            train_features = convert_examples_to_features(
+                examples=train_examples,
+                tokenizer=tokenizer,
+                max_seq_length=args.max_seq_length,  # default=384
+                doc_stride=args.doc_stride,  # default=128
+                max_query_length=args.max_query_length,  # default=64
+                is_training=True)
+            if args.local_rank == -1 or torch.distributed.get_rank() == 0:
+                logger.info("  Saving train features into cached file %s", cached_train_features_file)
+                with open(cached_train_features_file, "wb") as writer:
+                    pickle.dump(train_features, writer)
+
+            with open(cached_train_features_file, "rb") as reader:
+                train_features = pickle.load(reader)
+
+
         logger.info("***** Running training *****")
         logger.info("  Num orig examples = %d", len(train_examples))
         logger.info("  Num split examples = %d", len(train_features))
