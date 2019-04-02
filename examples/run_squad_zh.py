@@ -300,6 +300,15 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                                  doc_stride, max_query_length, is_training):
     """Loads a data file into a list of `InputBatch`s."""
 
+    """
+        examples=train_examples,
+        tokenizer=tokenizer,
+        max_seq_length=args.max_seq_length,  # default=384
+        doc_stride=args.doc_stride,  # default=128
+        max_query_length=args.max_query_length,  # default=64
+        is_training=True
+    """
+
     unique_id = 1000000000
 
     features = []
@@ -316,8 +325,8 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
         
         examples=[example1, example2, example3, ......]
     """
-    for (example_index, example) in enumerate(examples):
-        query_tokens = tokenizer.tokenize(example.question_text)  # BertTokenizer
+    for (example_index, example) in enumerate(examples):  # examples is a list.
+        query_tokens = tokenizer.tokenize(example.question_text)  # BertTokenizer, chinese word has space.
 
         if len(query_tokens) > max_query_length:  # max_query_length=64(default)
             query_tokens = query_tokens[0:max_query_length]
@@ -325,7 +334,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
         tok_to_orig_index = []
         orig_to_tok_index = []
         all_doc_tokens = []
-        for (i, token) in enumerate(example.doc_tokens):
+        for (i, token) in enumerate(example.doc_tokens):  # one by one chinese word.
             orig_to_tok_index.append(len(all_doc_tokens))
             sub_tokens = tokenizer.tokenize(token)  # eg: puppeteer --> ['puppet', '##eer']
             for sub_token in sub_tokens:
@@ -343,7 +352,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                 tok_end_position = orig_to_tok_index[example.end_position + 1] - 1
             else:
                 tok_end_position = len(all_doc_tokens) - 1
-            (tok_start_position, tok_end_position) = _improve_answer_span(
+            (tok_start_position, tok_end_position) = _improve_answer_span(  # new position of start and end.
                 all_doc_tokens, tok_start_position, tok_end_position, tokenizer,
                 example.orig_answer_text)
 
@@ -718,7 +727,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         nbest_json = []
         for (i, entry) in enumerate(nbest):
             output = collections.OrderedDict()
-            output["text"] = entry.text
+            output["text"] = entry.t
             output["probability"] = probs[i]
             output["start_logit"] = entry.start_logit
             output["end_logit"] = entry.end_logit
@@ -727,7 +736,8 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         assert len(nbest_json) >= 1
 
         if not is_version2:
-            all_predictions[example.qas_id] = nbest_json[0]["text"]
+            # all_predictions[example.qas_id] = nbest_json[0]["text"]
+            all_predictions[example.qas_id] = [nbest_json[0]["text"], nbest_json[0]["probability"]]
         else:
             # predict "" iff the null score - the score of best non-null > threshold
             score_diff = score_null - best_non_null_entry.start_logit - (
