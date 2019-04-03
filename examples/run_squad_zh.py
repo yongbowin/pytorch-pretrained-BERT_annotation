@@ -597,6 +597,12 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         for (feature_index, feature) in enumerate(features):
             result = unique_id_to_result[feature.unique_id]
+            """
+            n_best_size=20
+                The total number of n-best predictions to generate in the nbest_predictions.json output file.
+            
+            The largest value's position in logits is the best position.
+            """
             start_indexes = _get_best_indexes(result.start_logits, n_best_size)
             end_indexes = _get_best_indexes(result.end_logits, n_best_size)
             # if we could have irrelevant answers, get the min score of irrelevant
@@ -605,6 +611,14 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                 if feature_null_score < score_null:
                     score_null = feature_null_score
                     min_null_feature_index = feature_index
+                    """
+                    result:
+                        (
+                            unique_id=unique_id,
+                            start_logits=start_logits,
+                            end_logits=end_logits
+                        )
+                    """
                     null_start_logit = result.start_logits[0]
                     null_end_logit = result.end_logits[0]
 
@@ -727,7 +741,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         nbest_json = []
         for (i, entry) in enumerate(nbest):
             output = collections.OrderedDict()
-            output["text"] = entry.t
+            output["text"] = entry.text
             output["probability"] = probs[i]
             output["start_logit"] = entry.start_logit
             output["end_logit"] = entry.end_logit
@@ -740,10 +754,15 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
             all_predictions[example.qas_id] = [nbest_json[0]["text"], nbest_json[0]["probability"]]
         else:
             # predict "" iff the null score - the score of best non-null > threshold
+            """
+            score_null is the sum of `result.start_logits[0]` and `result.end_logits[0]`,
+            The larger score_null, the larger probs no answer,
+            so the less score_diff, the larger probs has answer.
+            """
             score_diff = score_null - best_non_null_entry.start_logit - (
                 best_non_null_entry.end_logit)
             scores_diff_json[example.qas_id] = score_diff
-            if score_diff > null_score_diff_threshold:
+            if score_diff > null_score_diff_threshold:  # The larger
                 all_predictions[example.qas_id] = ""
             else:
                 all_predictions[example.qas_id] = best_non_null_entry.text
@@ -871,11 +890,21 @@ def get_final_text(pred_text, orig_text, do_lower_case, verbose_logging=False):
 
 def _get_best_indexes(logits, n_best_size):
     """Get the n-best logits from a list."""
+
+    """
+    Examples:
+        >>> logits=[0.12, 0.33, 0.05, 0.43, 0.07]
+        >>> sum(logits)
+        1.0
+        >>> 
+        >>> sorted(enumerate(logits), key=lambda x: x[1], reverse=True)
+        [(3, 0.43), (1, 0.33), (0, 0.12), (4, 0.07), (2, 0.05)]
+    """
     index_and_score = sorted(enumerate(logits), key=lambda x: x[1], reverse=True)
 
     best_indexes = []
     for i in range(len(index_and_score)):
-        if i >= n_best_size:
+        if i >= n_best_size:  # n_best_size=20
             break
         best_indexes.append(index_and_score[i][0])
     return best_indexes

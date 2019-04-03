@@ -11,10 +11,16 @@ with open(BASE_PATH + "test_result.json", "r", encoding="utf-8") as f:
 
 
 def clean_sepc_char(text):
-    replace_p = ["\t", "\n", "\r", "\u3000", "<splitter>", "/>"]
+    replace_p = ["\t", "\n", "\r", "\u3000", "<splitter>", "/>", "\\x0a", "<br"]
     for i in replace_p:
         if i in text:
             text = text.replace(i, "")
+
+    C_pun = u'，。！？】）》：'
+    if text[0] in C_pun:  # if the first elem is chinese pun, remove it.
+        text = text[1:]
+
+    text = text.strip()
 
     return text
 
@@ -68,9 +74,9 @@ for i in res:
 
     data = json.loads(i)
     text = data["answers"][0]
+    text = E_trans_to_C(text)
     text = clean_sepc_char(text)
     text = remove_html(text)
-    text = E_trans_to_C(text)
 
     item_dict["question_id"] = data["question_id"]
     item_dict["question_type"] = data["question_type"]
@@ -84,6 +90,10 @@ for i in res:
 with open(BASE_PATH + "test_result_rm.json", 'w') as fout:
     for pred_answer in json_list:
         fout.write(json.dumps(pred_answer, ensure_ascii=False) + '\n')
+
+
+
+
 
 
 
