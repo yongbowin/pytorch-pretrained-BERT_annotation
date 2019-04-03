@@ -17,7 +17,7 @@ def clean_sepc_char(text):
             text = text.replace(i, "")
 
     C_pun = u'，。！？】）》：'
-    if text[0] in C_pun:  # if the first elem is chinese pun, remove it.
+    if text and text[0] in C_pun:  # if the first elem is chinese pun, remove it.
         text = text[1:]
 
     text = text.strip()
