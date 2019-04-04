@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5e3022bd-a31c-415a-bbc4-2f14ea5a2ffb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/run_squad_zh.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_squad_zh.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -91,14 +89,14 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="6" />
           <entry key="md" value="117" />
-          <entry key="py" value="18692" />
+          <entry key="py" value="19369" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="18701" />
+          <entry key="Python" value="19378" />
           <entry key="SQL" value="4" />
         </counts>
       </usages-collector>
@@ -139,8 +137,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="755" column="64" selection-start-line="755" selection-start-column="64" selection-end-line="755" selection-end-column="64" />
+            <state relative-caret-position="487">
+              <caret line="646" column="62" lean-forward="true" selection-start-line="646" selection-start-column="62" selection-end-line="646" selection-end-column="62" />
             </state>
           </provider>
         </entry>
@@ -204,8 +202,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tok_start_position = orig_to_tok_index[example.start_position</find>
-      <find>tok_start_position = orig_to_tok_index[example.start_position]</find>
       <find>max_qu</find>
       <find>output_model_file</find>
       <find>output_dir</find>
@@ -234,6 +230,8 @@
       <find>json.load</find>
       <find>yesno</find>
       <find>token_to_orig_map</find>
+      <find>output_null_log_odds_file</find>
+      <find>null_score_diff_threshold</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -878,8 +876,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="755" column="64" selection-start-line="755" selection-start-column="64" selection-end-line="755" selection-end-column="64" />
+        <state relative-caret-position="487">
+          <caret line="646" column="62" lean-forward="true" selection-start-line="646" selection-start-column="62" selection-end-line="646" selection-end-column="62" />
         </state>
       </provider>
     </entry>

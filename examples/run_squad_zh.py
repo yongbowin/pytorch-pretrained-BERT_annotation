@@ -615,7 +615,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         null_end_logit = 0  # the end logit at the slice with min null score
 
         for (feature_index, feature) in enumerate(features):  # for all features in one sample.
-            result = unique_id_to_result[feature.unique_id]
+            result = unique_id_to_result[feature.unique_id]  # one feature one result.
             """
             n_best_size=20
                 The total number of n-best predictions to generate in the nbest_predictions.json output file.
@@ -636,8 +636,17 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                 In the `score_null`, the min score was saved in one sample (among many features).
                 
                 `result.start_logits[0]` and `result.end_logits[0]` are `[CLS]`
+                
+                Assume when start is the first position and end also the first position, there is no answer.
+                So, no answer probs is `score_null=feature_null_score=result.start_logits[0] + result.end_logits[0]`,
+                The target to acquire the min `score_null`:
+                    if the min `score_null` (no answer) is larger than others (have answer), such as
+                     `result.start_logits[i] + result.end_logits[j]`, the model will select the lager 
+                     situation, i.e., the `score_null` (no answer).
+                假设当开始位置和结束位置都在第一个位置的时候，没有答案。首先找出没有答案的概率值最小的情况，如果这个时候其他的开始和结束位置的
+                组合的概率值的最大值，小于前边的值（或者间隔大于预设的阈值），那么这个时候可以判定为无答案。
                 """
-                feature_null_score = result.start_logits[0] + result.end_logits[0]
+                feature_null_score = result.start_logits[0] + result.end_logits[0]  # one feature one result.
                 if feature_null_score < score_null:  # score_null=1000000
                     score_null = feature_null_score
                     min_null_feature_index = feature_index
@@ -751,7 +760,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
             """
             if not best_non_null_entry:
                 if entry.text:
-                    best_non_null_entry = entry  # (x.start_logit + x.end_logit) largest in one
+                    best_non_null_entry = entry
 
         probs = _compute_softmax(total_scores)  # for one sample
 
@@ -776,6 +785,9 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         assert len(nbest_json) >= 1
 
         if not is_version2:
+            """
+            `nbest_json[0]` is the best pred result, because it was sorted from high to low.
+            """
             # all_predictions[example.qas_id] = nbest_json[0]["text"]
             all_predictions[example.qas_id] = [nbest_json[0]["text"], nbest_json[0]["probability"]]
         else:
@@ -788,7 +800,10 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
             score_diff = score_null - best_non_null_entry.start_logit - (
                 best_non_null_entry.end_logit)
             scores_diff_json[example.qas_id] = score_diff
-            if score_diff > null_score_diff_threshold:  # The larger
+            if score_diff > null_score_diff_threshold:
+                """
+                If (null_score - best_non_null) is greater than the threshold predict null
+                """
                 all_predictions[example.qas_id] = ""
             else:
                 all_predictions[example.qas_id] = best_non_null_entry.text
@@ -814,7 +829,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         writer.write(json.dumps(all_nbest_json, indent=4) + "\n")
     
     if is_version2:
-        with open(output_null_log_odds_file, "w") as writer:
+        with open(output_null_log_odds_file, "w") as writer:  # null_odds.json
             writer.write(json.dumps(scores_diff_json, indent=4) + "\n")
 
 
