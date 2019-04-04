@@ -796,6 +796,8 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
             score_null is the sum of `result.start_logits[0]` and `result.end_logits[0]`,
             The larger score_null, the larger probs no answer,
             so the less score_diff, the larger probs has answer.
+            
+            score_diff越小，证明越有答案。
             """
             score_diff = score_null - best_non_null_entry.start_logit - (
                 best_non_null_entry.end_logit)

@@ -89,14 +89,14 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="6" />
           <entry key="md" value="117" />
-          <entry key="py" value="19369" />
+          <entry key="py" value="19381" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="19378" />
+          <entry key="Python" value="19390" />
           <entry key="SQL" value="4" />
         </counts>
       </usages-collector>
@@ -137,8 +137,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="487">
-              <caret line="646" column="62" lean-forward="true" selection-start-line="646" selection-start-column="62" selection-end-line="646" selection-end-column="62" />
+            <state relative-caret-position="278">
+              <caret line="784" column="35" lean-forward="true" selection-start-line="784" selection-start-column="35" selection-end-line="784" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -519,7 +519,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="36" width="1920" height="1044" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25079873" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -876,8 +875,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="646" column="62" lean-forward="true" selection-start-line="646" selection-start-column="62" selection-end-line="646" selection-end-column="62" />
+        <state relative-caret-position="278">
+          <caret line="784" column="35" lean-forward="true" selection-start-line="784" selection-start-column="35" selection-end-line="784" selection-end-column="35" />
         </state>
       </provider>
     </entry>
