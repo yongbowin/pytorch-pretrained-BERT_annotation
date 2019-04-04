@@ -570,10 +570,24 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
     logger.info("Writing nbest to: %s" % (output_nbest_file))  # nbest_predictions.json
 
     example_index_to_features = collections.defaultdict(list)
+    """
+    `all_results`, is the nums of features (after sliding windows, the nums of sub samples)
+    """
     for feature in all_features:
+        """
+        example_index_to_features:
+            {
+                "feature.example_index1": [feature1, feature2, ...],
+                "feature.example_index2": [..., ],
+                ...
+            }
+        """
         example_index_to_features[feature.example_index].append(feature)
 
     unique_id_to_result = {}
+    """
+    `all_results`, is the nums of features (after sliding windows, the nums of sub samples)
+    """
     for result in all_results:
         unique_id_to_result[result.unique_id] = result
 
@@ -585,7 +599,12 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
     all_nbest_json = collections.OrderedDict()
     scores_diff_json = collections.OrderedDict()
 
-    for (example_index, example) in enumerate(all_examples):
+    """
+    `all_examples`, is the nums of samples (before sliding windows),
+    
+    one `example` is one sample, one sample has many features.
+    """
+    for (example_index, example) in enumerate(all_examples):  # for one sample
         features = example_index_to_features[example_index]
 
         prelim_predictions = []
@@ -595,35 +614,38 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         null_start_logit = 0  # the start logit at the slice with min null score
         null_end_logit = 0  # the end logit at the slice with min null score
 
-        for (feature_index, feature) in enumerate(features):
+        for (feature_index, feature) in enumerate(features):  # for all features in one sample.
             result = unique_id_to_result[feature.unique_id]
             """
             n_best_size=20
                 The total number of n-best predictions to generate in the nbest_predictions.json output file.
             
-            The largest value's position in logits is the best position.
+            The largest value's position in logits is the best position.           
+            Get the first 20 larger logits's indexs to `start_indexes` and `end_indexes`.
+            
+            `all_results`:
+                all_results.append(RawResult(unique_id=unique_id,
+                                             start_logits=start_logits,
+                                             end_logits=end_logits))
             """
-            start_indexes = _get_best_indexes(result.start_logits, n_best_size)
+            start_indexes = _get_best_indexes(result.start_logits, n_best_size)  # n_best_size=20
             end_indexes = _get_best_indexes(result.end_logits, n_best_size)
-            # if we could have irrelevant answers, get the min score of irrelevant
+            # if we could have irrelevant answers, get the min score of irrelevant, i.e., `score_null`.
             if is_version2:
+                """
+                In the `score_null`, the min score was saved in one sample (among many features).
+                
+                `result.start_logits[0]` and `result.end_logits[0]` are `[CLS]`
+                """
                 feature_null_score = result.start_logits[0] + result.end_logits[0]
-                if feature_null_score < score_null:
+                if feature_null_score < score_null:  # score_null=1000000
                     score_null = feature_null_score
                     min_null_feature_index = feature_index
-                    """
-                    result:
-                        (
-                            unique_id=unique_id,
-                            start_logits=start_logits,
-                            end_logits=end_logits
-                        )
-                    """
                     null_start_logit = result.start_logits[0]
                     null_end_logit = result.end_logits[0]
 
-            for start_index in start_indexes:
-                for end_index in end_indexes:
+            for start_index in start_indexes:  # length=20
+                for end_index in end_indexes:  # length=20
                     # We could hypothetically create invalid predictions, e.g., predict
                     # that the start of the span is in the question. We throw out all
                     # invalid predictions.
@@ -642,12 +664,12 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                     length = end_index - start_index + 1
                     if length > max_answer_length:
                         continue
-                    prelim_predictions.append(
+                    prelim_predictions.append(  # prelim_predictions=[]
                         _PrelimPrediction(
                             feature_index=feature_index,
                             start_index=start_index,
                             end_index=end_index,
-                            start_logit=result.start_logits[start_index],
+                            start_logit=result.start_logits[start_index],  # `start_logit` is a probs value in position `start_index`.
                             end_logit=result.end_logits[end_index]))
 
         if is_version2:
@@ -661,7 +683,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         prelim_predictions = sorted(
             prelim_predictions,
-            key=lambda x: (x.start_logit + x.end_logit),
+            key=lambda x: (x.start_logit + x.end_logit),  # from larger to lower to sort.
             reverse=True)
 
         _NbestPrediction = collections.namedtuple(  # pylint: disable=invalid-name
@@ -670,7 +692,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         seen_predictions = {}
         nbest = []
         for pred in prelim_predictions:
-            if len(nbest) >= n_best_size:
+            if len(nbest) >= n_best_size:  # n_best_size=20, nbest(=[]) just save 20 pred results.
                 break
             feature = features[pred.feature_index]
             if pred.start_index > 0:
@@ -697,7 +719,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                 final_text = ""
                 seen_predictions[final_text] = True
 
-            nbest.append(
+            nbest.append(  # `nbest` is a list
                 _NbestPrediction(
                     text=final_text,
                     start_logit=pred.start_logit,
@@ -721,13 +743,17 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
         total_scores = []
         best_non_null_entry = None
-        for entry in nbest:
+        for entry in nbest:  # one sample has one nbest list.
             total_scores.append(entry.start_logit + entry.end_logit)
+            """
+            acquire the first entry, because the first is the largest sum of `entry.start_logit` and `entry.end_logit`. 
+            `nbest` is a list that sorted from high to low.
+            """
             if not best_non_null_entry:
                 if entry.text:
-                    best_non_null_entry = entry
+                    best_non_null_entry = entry  # (x.start_logit + x.end_logit) largest in one
 
-        probs = _compute_softmax(total_scores)
+        probs = _compute_softmax(total_scores)  # for one sample
 
         """
         {
@@ -1224,7 +1250,7 @@ def main():
     if args.do_predict and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
         eval_examples = read_squad_examples(
             input_file=args.predict_file, is_training=False)
-        eval_features = convert_examples_to_features(
+        eval_features = convert_examples_to_features(  # after sliding windows, the nums of train sub samples.
             examples=eval_examples,
             tokenizer=tokenizer,
             max_seq_length=args.max_seq_length,
@@ -1233,9 +1259,9 @@ def main():
             is_training=False)
 
         logger.info("***** Running predictions *****")
-        logger.info("  Num orig examples = %d", len(eval_examples))
-        logger.info("  Num split examples = %d", len(eval_features))
-        logger.info("  Batch size = %d", args.predict_batch_size)
+        logger.info("  Num orig examples = %d", len(eval_examples))  # 4983
+        logger.info("  Num split examples = %d", len(eval_features))  # 14138
+        logger.info("  Batch size = %d", args.predict_batch_size)  # 8
 
         all_input_ids = torch.tensor([f.input_ids for f in eval_features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in eval_features], dtype=torch.long)
@@ -1257,11 +1283,38 @@ def main():
             segment_ids = segment_ids.to(device)
             with torch.no_grad():
                 batch_start_logits, batch_end_logits = model(input_ids, segment_ids, input_mask)
+            """
+            `example_indices` is the nums of features (after sliding windows, the nums of sub samples)
+            """
             for i, example_index in enumerate(example_indices):
+                """
+                batch_start_logits: torch.Size([8, 512])
+                    tensor([[-1.4582, -5.7244, -6.9697,  ..., -8.6040, -8.0579, -7.6274],
+                            [-5.8861, -8.2317, -8.6117,  ..., -9.0105, -8.9462, -8.6531],
+                            [-4.8405, -7.7825, -8.5303,  ..., -8.9509, -8.9160, -8.6216],
+                            ...,
+                            [ 8.0725, -5.9398, -6.7134,  ..., -1.7903, -0.6773, -2.1586],
+                            [ 8.3279, -5.8439, -6.5419,  ...,  3.1433, -2.7024, -1.7557],
+                            [ 8.6204, -6.5735, -7.1647,  ..., -5.4439, -5.2706, -1.8444]],
+                           device='cuda:0')
+                
+                batch size = 8, 
+                `start_logits` is a list that has 512 elems, shape is (1, 512). i.e., 512 positions
+                """
                 start_logits = batch_start_logits[i].detach().cpu().tolist()
                 end_logits = batch_end_logits[i].detach().cpu().tolist()
+
+                # logger.info("----------------------------------------------")
+                # logger.info("batch_start_logits: %s" % str(batch_start_logits))
+                # logger.info("batch_start_logits size: %s" % str(batch_start_logits.size()))
+                # logger.info("start_logits: %s" % str(start_logits))
+                # logger.info("----------------------------------------------")
+
                 eval_feature = eval_features[example_index.item()]
                 unique_id = int(eval_feature.unique_id)
+                """
+                `all_results`, is the nums of features (after sliding windows, the nums of sub samples)
+                """
                 all_results.append(RawResult(unique_id=unique_id,
                                              start_logits=start_logits,
                                              end_logits=end_logits))

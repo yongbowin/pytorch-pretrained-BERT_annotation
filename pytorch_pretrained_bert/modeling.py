@@ -1549,9 +1549,13 @@ class BertForQuestionAnswering(PreTrainedBertModel):
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, start_positions=None, end_positions=None):
+        """
+        encoded_layers[-1].size():  # sequence_output, i.e., the final layer output.
+            torch.Size([1, 11, 768])
+        """
         sequence_output, _ = self.bert(input_ids, token_type_ids, attention_mask, output_all_encoded_layers=False)
-        logits = self.qa_outputs(sequence_output)
-        start_logits, end_logits = logits.split(1, dim=-1)
+        logits = self.qa_outputs(sequence_output)  # torch.Size([1, 11, 2])
+        start_logits, end_logits = logits.split(1, dim=-1)  # torch.Size([1, 11, 1])
         start_logits = start_logits.squeeze(-1)
         end_logits = end_logits.squeeze(-1)
 

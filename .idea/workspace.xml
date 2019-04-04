@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5e3022bd-a31c-415a-bbc4-2f14ea5a2ffb" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/clean_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/clean_result.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/run_squad_zh.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_squad_zh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,9 +44,9 @@
     <session id="1184885413">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="33" />
-          <entry key="project.open.time.0" value="8" />
-          <entry key="project.open.time.1" value="5" />
+          <entry key="project.closed" value="35" />
+          <entry key="project.open.time.0" value="9" />
+          <entry key="project.open.time.1" value="6" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.16" value="1" />
@@ -53,7 +54,7 @@
           <entry key="project.open.time.20" value="1" />
           <entry key="project.open.time.27" value="1" />
           <entry key="project.open.time.3" value="6" />
-          <entry key="project.open.time.4" value="1" />
+          <entry key="project.open.time.4" value="2" />
           <entry key="project.open.time.40" value="1" />
           <entry key="project.open.time.48" value="1" />
           <entry key="project.open.time.6" value="1" />
@@ -61,7 +62,7 @@
           <entry key="project.open.time.66" value="1" />
           <entry key="project.open.time.8" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="33" />
+          <entry key="project.opened" value="36" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -69,7 +70,7 @@
           <entry key="csv" value="2" />
           <entry key="json" value="3" />
           <entry key="md" value="4" />
-          <entry key="py" value="151" />
+          <entry key="py" value="154" />
           <entry key="pyi" value="1" />
           <entry key="sh" value="1" />
           <entry key="txt" value="7" />
@@ -81,7 +82,7 @@
           <entry key="JSON" value="3" />
           <entry key="Markdown" value="4" />
           <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="151" />
+          <entry key="Python" value="154" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -90,14 +91,14 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="6" />
           <entry key="md" value="117" />
-          <entry key="py" value="17372" />
+          <entry key="py" value="18692" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="17381" />
+          <entry key="Python" value="18701" />
           <entry key="SQL" value="4" />
         </counts>
       </usages-collector>
@@ -105,23 +106,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/examples/clean_result.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/examples/test.py">
+        <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="12" column="26" selection-start-line="12" selection-start-column="26" selection-end-line="12" selection-end-column="26" />
+            <state relative-caret-position="742">
+              <caret line="1576" column="29" lean-forward="true" selection-start-line="1576" selection-start-column="29" selection-end-line="1576" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -147,11 +136,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22363">
-              <caret line="1199" column="29" selection-start-line="1199" selection-start-column="29" selection-end-line="1199" selection-end-column="29" />
+            <state relative-caret-position="532">
+              <caret line="755" column="64" selection-start-line="755" selection-start-column="64" selection-end-line="755" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -177,7 +166,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/run_squad2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13642">
+            <state relative-caret-position="832">
               <caret line="718" column="43" selection-start-line="718" selection-start-column="43" selection-end-line="718" selection-end-column="43" />
               <folding>
                 <element signature="e#737#775#0" expanded="true" />
@@ -215,7 +204,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>read_squad_examples</find>
       <find>tok_start_position = orig_to_tok_index[example.start_position</find>
       <find>tok_start_position = orig_to_tok_index[example.start_position]</find>
       <find>max_qu</find>
@@ -245,6 +233,7 @@
       <find>with open</find>
       <find>json.load</find>
       <find>yesno</find>
+      <find>token_to_orig_map</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -267,7 +256,6 @@
         <option value="$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py" />
         <option value="$PROJECT_DIR$/examples/test_BertModel.py" />
         <option value="$PROJECT_DIR$/examples/run_lm_finetuning.py" />
-        <option value="$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py" />
         <option value="$PROJECT_DIR$/examples/create_tsv.py" />
         <option value="$PROJECT_DIR$/examples/create_csv.py" />
         <option value="$PROJECT_DIR$/examples/stati_yesno.py" />
@@ -284,11 +272,12 @@
         <option value="$PROJECT_DIR$/examples/run_squad2.py" />
         <option value="$PROJECT_DIR$/examples/tt.py" />
         <option value="$PROJECT_DIR$/examples/analysic_pred_zhidao1.py" />
-        <option value="$PROJECT_DIR$/examples/run_squad_zh.py" />
         <option value="$PROJECT_DIR$/examples/tt1.py" />
         <option value="$PROJECT_DIR$/examples/create_submit_file.py" />
         <option value="$PROJECT_DIR$/examples/test.py" />
         <option value="$PROJECT_DIR$/examples/clean_result.py" />
+        <option value="$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py" />
+        <option value="$PROJECT_DIR$/examples/run_squad_zh.py" />
       </list>
     </option>
   </component>
@@ -532,8 +521,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="36" width="1920" height="1044" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2428115" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25079873" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -678,13 +668,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/utils/data/dataloader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="767" column="8" selection-start-line="767" selection-start-column="8" selection-end-line="767" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/ttt.py" />
     <entry file="file://$PROJECT_DIR$/examples/create_csv.py" />
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/utils/data/dataset.py">
@@ -736,13 +719,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/run_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15485">
-          <caret line="834" column="33" selection-start-line="834" selection-start-column="33" selection-end-line="834" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_squad_dr.py" />
     <entry file="file://$PROJECT_DIR$/examples/tt.json">
       <provider selected="true" editor-type-id="text-editor">
@@ -786,13 +762,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="582">
-          <caret line="1427" lean-forward="true" selection-start-line="1427" selection-end-line="1427" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/analysic_lic_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
@@ -814,6 +783,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/examples/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="26" selection-start-line="12" selection-start-column="26" selection-end-line="12" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/clean_result.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4541">
@@ -821,13 +807,6 @@
           <folding>
             <element signature="e#673#711#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22363">
-          <caret line="1199" column="29" selection-start-line="1199" selection-start-column="29" selection-end-line="1199" selection-end-column="29" />
         </state>
       </provider>
     </entry>
@@ -845,16 +824,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/run_squad2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13642">
-          <caret line="718" column="43" selection-start-line="718" selection-start-column="43" selection-end-line="718" selection-end-column="43" />
-          <folding>
-            <element signature="e#737#775#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/transfo_format_after_extract_dataset.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1292">
@@ -869,10 +838,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/test.py">
+    <entry file="file://$PROJECT_DIR$/examples/run_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" column="26" selection-start-line="12" selection-start-column="26" selection-end-line="12" selection-end-column="26" />
+        <state relative-caret-position="457">
+          <caret line="678" column="31" selection-start-line="678" selection-start-column="31" selection-end-line="678" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/run_squad2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="832">
+          <caret line="718" column="43" selection-start-line="718" selection-start-column="43" selection-end-line="718" selection-end-column="43" />
+          <folding>
+            <element signature="e#737#775#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -883,13 +862,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/clean_result.py">
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/utils/data/dataloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="304">
+          <caret line="16" column="31" lean-forward="true" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pytorch_pretrained_bert/modeling.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="742">
+          <caret line="1576" column="29" lean-forward="true" selection-start-line="1576" selection-start-column="29" selection-end-line="1576" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="755" column="64" selection-start-line="755" selection-start-column="64" selection-end-line="755" selection-end-column="64" />
         </state>
       </provider>
     </entry>
