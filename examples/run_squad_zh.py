@@ -789,7 +789,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
             `nbest_json[0]` is the best pred result, because it was sorted from high to low.
             """
             # all_predictions[example.qas_id] = nbest_json[0]["text"]
-            all_predictions[example.qas_id] = [nbest_json[0]["text"], nbest_json[0]["probability"]]
+            all_predictions[example.qas_id] = [nbest_json[0]["text"], nbest_json[0]["start_logit"], nbest_json[0]["end_logit"]]
         else:
             # predict "" iff the null score - the score of best non-null > threshold
             """
