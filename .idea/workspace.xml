@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5e3022bd-a31c-415a-bbc4-2f14ea5a2ffb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/run_squad_zh.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_squad_zh.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -90,14 +89,14 @@
           <entry key="Python Console" value="13" />
           <entry key="dummy" value="6" />
           <entry key="md" value="117" />
-          <entry key="py" value="19383" />
+          <entry key="py" value="19386" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="117" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="19392" />
+          <entry key="Python" value="19395" />
           <entry key="SQL" value="4" />
         </counts>
       </usages-collector>
@@ -138,8 +137,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="750" column="30" lean-forward="true" selection-start-line="750" selection-start-column="30" selection-end-line="750" selection-end-column="30" />
+            <state relative-caret-position="1156">
+              <caret line="832" column="19" lean-forward="true" selection-start-line="832" selection-start-column="19" selection-end-line="832" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -886,8 +885,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_squad_zh.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="750" column="30" lean-forward="true" selection-start-line="750" selection-start-column="30" selection-end-line="750" selection-end-column="30" />
+        <state relative-caret-position="1156">
+          <caret line="832" column="19" lean-forward="true" selection-start-line="832" selection-start-column="19" selection-end-line="832" selection-end-column="19" />
         </state>
       </provider>
     </entry>

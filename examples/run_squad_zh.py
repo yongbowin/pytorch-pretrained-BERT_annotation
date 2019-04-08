@@ -825,14 +825,14 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
         }
     """
     with open(output_prediction_file, "w") as writer:  # predictions.json
-        writer.write(json.dumps(all_predictions, indent=4) + "\n")
+        writer.write(json.dumps(all_predictions, ensure_ascii=False, indent=4) + "\n")
 
     with open(output_nbest_file, "w") as writer:  # nbest_predictions.json
-        writer.write(json.dumps(all_nbest_json, indent=4) + "\n")
+        writer.write(json.dumps(all_nbest_json, ensure_ascii=False, indent=4) + "\n")
     
     if is_version2:
         with open(output_null_log_odds_file, "w") as writer:  # null_odds.json
-            writer.write(json.dumps(scores_diff_json, indent=4) + "\n")
+            writer.write(json.dumps(scores_diff_json, ensure_ascii=False, indent=4) + "\n")
 
 
 def get_final_text(pred_text, orig_text, do_lower_case, verbose_logging=False):
