@@ -1,18 +1,36 @@
-# import re
-#
-# text = '小箭头。</p><p><imgsrc="28900480099"/>iiiiiiiiiiiiiiiiiiiii</p><p>2.点击小箭头，则就<a>是筛选</a>。'
-#
-#
-# def remove_html(text):
-#     reg = re.compile(r'<[^>]+>', re.S)
-#     text = reg.sub('', text)
-#
-#     return text
-#
-#
-# print(remove_html(text))
+import logging
+import math
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-a = "This is a test。"
-print(a[1:])
-print(a.replace("。", ""))
+def _compute_softmax(scores):
+    """Compute softmax probability over raw logits."""
+    if not scores:
+        return []
+
+    max_score = None
+    for score in scores:
+        if max_score is None or score > max_score:
+            max_score = score
+
+    exp_scores = []
+    total_sum = 0.0
+    for score in scores:
+        x = math.exp(score - max_score)
+        exp_scores.append(x)
+        total_sum += x
+
+    probs = []
+    for score in exp_scores:
+        probs.append(score / total_sum)
+    return probs
+
+
+probs = _compute_softmax([1, 2, 3])
+logger.info("probs: %s" % probs)
+# logger.info("Test: %s", probs)
+# logger.info(sum(probs))
